@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VocabMaster - 英単語フラッシュカード</title>
+  <!-- Webアプリ・ファビコンアイコン指定 -->
+  <link rel="icon" href="icon.png" type="image/png">
+  <link rel="apple-touch-icon" href="icon.png">
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- React & ReactDOM -->
@@ -76,6 +79,7 @@
         color: "indigo",
         createdAt: Date.now() - 1000000,
         cards: [       
+          
 { id: "a1", word: "submit", meaning: "Aに服従する、提出する", partOfSpeech: "動詞", example: "submit a report", exampleMeaning: "報告書を提出する", mastered: false },
 { id: "a2", word: "tempt", meaning: "〜を誘惑する、〜する気にさせる", partOfSpeech: "動詞", example: "a tempting offer", exampleMeaning: "魅力的な申し出", mastered: false },
 { id: "a3", word: "resign", meaning: "辞職する、やめる", partOfSpeech: "動詞", example: "The president will resign soon.", exampleMeaning: "社長はまもなく辞任する", mastered: false },
@@ -490,94 +494,93 @@
 { id: "a412", word: "hybrid", meaning: "混成物、交配種、ハイブリッド", partOfSpeech: "名詞", example: "a hybrid of two plants", exampleMeaning: "2つの植物の交配種", mastered: false },
 { id: "a413", word: "scent", meaning: "香り、におい", partOfSpeech: "名詞", example: "the sweet scent of roses", exampleMeaning: "バラの甘い香り", mastered: false },
 { id: "a414", word: "inflammation", meaning: "炎症", partOfSpeech: "名詞", example: "reduce inflammation in the eye", exampleMeaning: "眼の炎症を軽減する", mastered: false },
-  { id: "a415", word: "pill", meaning: "錠剤、薬", partOfSpeech: "名詞", example: "take sleeping pills", exampleMeaning: "睡眠薬を飲む", mastered: false},
-  { id: "a416", word: "grave", meaning: "重大な、重々しい", partOfSpeech: "形容詞", example: "be in grave danger", exampleMeaning: "重大な危険にある", mastered: false },
-  { id: "a417", word: "fertile", meaning: "肥えた", partOfSpeech: "形容詞", example: "fertile soil", exampleMeaning: "肥えた土壌", mastered: false },
-  { id: "a418", word: "hostile", meaning: "敵意を持った、反感を持つ", partOfSpeech: "形容詞", example: "be hostile to the government", exampleMeaning: "政府に反感を持つ", mastered: false },
-  { id: "a419", word: "indispensable", meaning: "不可欠な", partOfSpeech: "形容詞", example: "Water is indispensable to life.", exampleMeaning: "水は生命にとって不可欠だ。", mastered: false },
-  { id: "a420", word: "oriented", meaning: "志向の、関心がある", partOfSpeech: "形容詞", example: "an information-oriented society", exampleMeaning: "情報志向の社会", mastered: false },
-  { id: "a421", word: "splendid", meaning: "すばらしい、壮麗な", partOfSpeech: "形容詞", example: "a splendid view", exampleMeaning: "すばらしい景色", mastered: false },
-  { id: "a422", word: "competent", meaning: "有能な", partOfSpeech: "形容詞", example: "a competent teacher", exampleMeaning: "有能な教師", mastered: false },
-  { id: "a423", word: "supreme", meaning: "最高の", partOfSpeech: "形容詞", example: "supreme joy", exampleMeaning: "最高の喜び", mastered: false },
-  { id: "a424", word: "straightforward", meaning: "わかりやすい、簡単な、率直な", partOfSpeech: "形容詞", example: "straightforward language", exampleMeaning: "わかりやすい言葉遣い", mastered: false },
-  { id: "a425", word: "sacred", meaning: "神聖な", partOfSpeech: "形容詞", example: "a land sacred to Islam", exampleMeaning: "イスラム教徒の聖地", mastered: false },
-  { id: "a426", word: "bold", meaning: "大胆な", partOfSpeech: "形容詞", example: "take bold action", exampleMeaning: "大胆な行動をとる", mastered: false },
-  { id: "a427", word: "uneasy", meaning: "不安な", partOfSpeech: "形容詞", example: "feel uneasy about the future", exampleMeaning: "将来について不安な気持ちになる", mastered: false },
-  { id: "a428", word: "neat", meaning: "きちんとした、こきれいな", partOfSpeech: "形容詞", example: "neat clothes", exampleMeaning: "きちんとした服", mastered: false },
-  { id: "a429", word: "shallow", meaning: "浅い、浅はかな", partOfSpeech: "形容詞", example: "a shallow river", exampleMeaning: "浅い川", mastered: false },
-  { id: "a430", word: "fake", meaning: "にせ物の", partOfSpeech: "形容詞", example: "make a fake cake", exampleMeaning: "にせ物のケーキを作る", mastered: false },
-  { id: "a431", word: "superficial", meaning: "表面的な、うわべの", partOfSpeech: "形容詞", example: "a superficial difference", exampleMeaning: "表面的な違い", mastered: false },
-  { id: "a432", word: "absurd", meaning: "ばかげた", partOfSpeech: "形容詞", example: "a completely absurd idea", exampleMeaning: "まったくばかげた考え", mastered: false },
-  { id: "a433", word: "fragile", meaning: "壊れやすい、もろい", partOfSpeech: "形容詞", example: "fragile items", exampleMeaning: "壊れやすい物", mastered: false },
-  { id: "a434", word: "respectable", meaning: "ちゃんとした、立派な", partOfSpeech: "形容詞", example: "a girl from a respectable family", exampleMeaning: "ちゃんとした家の娘", mastered: false },
-  { id: "a435", word: "magnificent", meaning: "すばらしい、立派な", partOfSpeech: "形容詞", example: "a magnificent view", exampleMeaning: "すばらしい光景", mastered: false },
-  { id: "a436", word: "infinite", meaning: "無限の", partOfSpeech: "形容詞", example: "an infinite number of stars", exampleMeaning: "無限の数の星", mastered: false },
-  { id: "a437", word: "comprehensive", meaning: "包括的な、総合的な", partOfSpeech: "形容詞", example: "a comprehensive study", exampleMeaning: "包括的な研究", mastered: false },
-  { id: "a438", word: "steep", meaning: "険しい", partOfSpeech: "形容詞", example: "a steep slope", exampleMeaning: "険しい坂", mastered: false },
-  { id: "a439", word: "gross", meaning: "総計の", partOfSpeech: "形容詞", example: "the gross domestic product", exampleMeaning: "国内総生産", mastered: false },
-  { id: "a440", word: "subsequent", meaning: "次に起こる、後の", partOfSpeech: "形容詞", example: "prepare for subsequent events", exampleMeaning: "次に起こる出来事に備える", mastered: false },
-  { id: "a441", word: "sincere", meaning: "心からの、誠実な", partOfSpeech: "形容詞", example: "my sincere apologies", exampleMeaning: "私の心からの謝罪", mastered: false },
-  { id: "a442", word: "toxic", meaning: "有毒な", partOfSpeech: "形容詞", example: "a toxic gas", exampleMeaning: "有毒なガス", mastered: false },
-  { id: "a443", word: "neutral", meaning: "中立の、公平な", partOfSpeech: "形容詞", example: "take a neutral position", exampleMeaning: "中立の立場をとる", mastered: false },
-  { id: "a444", word: "diligent", meaning: "勤勉な", partOfSpeech: "形容詞", example: "a diligent student", exampleMeaning: "勤勉な学生", mastered: false },
-  { id: "a445", word: "sore", meaning: "痛い", partOfSpeech: "形容詞", example: "have a sore throat", exampleMeaning: "のどが痛い", mastered: false },
-  { id: "a446", word: "contaminated", meaning: "汚染された", partOfSpeech: "形容詞", example: "drink contaminated water", exampleMeaning: "汚染された水を飲む", mastered: false },
-  { id: "a447", word: "ambiguous", meaning: "あいまいな、多義的な", partOfSpeech: "形容詞", example: "an ambiguous expression", exampleMeaning: "あいまいな表現", mastered: false },
-  { id: "a448", word: "oral", meaning: "口述の", partOfSpeech: "形容詞", example: "an oral examination", exampleMeaning: "口述の試験", mastered: false },
-  { id: "a449", word: "restless", meaning: "落ち着かない、不安な", partOfSpeech: "形容詞", example: "spend a restless night", exampleMeaning: "落ち着かない夜を過ごす", mastered: false },
-  { id: "a450", word: "rotten", meaning: "腐った", partOfSpeech: "形容詞", example: "smell like rotten eggs", exampleMeaning: "腐った卵のようににおう", mastered: false },
-  { id: "a451", word: "vigorous", meaning: "精力的な", partOfSpeech: "形容詞", example: "vigorous activity", exampleMeaning: "精力的な活動", mastered: false },
-  { id: "a452", word: "immense", meaning: "莫大な、計り知れぬ", partOfSpeech: "形容詞", example: "an immense amount of information", exampleMeaning: "莫大な量の情報", mastered: false },
-  { id: "a453", word: "metropolitan", meaning: "大都市の", partOfSpeech: "形容詞", example: "metropolitan areas", exampleMeaning: "大都市圏", mastered: false },
-  { id: "a454", word: "punctual", meaning: "時間をきっちり守る", partOfSpeech: "形容詞", example: "be punctual for an appointment", exampleMeaning: "約束の時間をきっちり守る", mastered: false },
-  { id: "a455", word: "solitary", meaning: "孤独な、寂しい", partOfSpeech: "形容詞", example: "a solitary old man", exampleMeaning: "孤独な老人", mastered: false },
-  { id: "a456", word: "collective", meaning: "集団の、集合的な", partOfSpeech: "形容詞", example: "take collective action", exampleMeaning: "集団行動を起こす", mastered: false },
-  { id: "a457", word: "diplomatic", meaning: "外交的な", partOfSpeech: "形容詞", example: "break off diplomatic relations", exampleMeaning: "外交関係を断絶する", mastered: false },
-  { id: "a458", word: "nasty", meaning: "不快な、嫌な", partOfSpeech: "形容詞", example: "a nasty smell", exampleMeaning: "不快なにおい", mastered: false },
-  { id: "a459", word: "helpless", meaning: "無力な", partOfSpeech: "形容詞", example: "a helpless baby", exampleMeaning: "無力な赤ん坊", mastered: false },
-  { id: "a460", word: "explicit", meaning: "明確な、露骨な", partOfSpeech: "形容詞", example: "give explicit instructions", exampleMeaning: "明確な指示を与える", mastered: false },
-  { id: "a461", word: "bankrupt", meaning: "破産した", partOfSpeech: "形容詞", example: "His company went bankrupt.", exampleMeaning: "彼の会社は破産した。", mastered: false },
-  { id: "a462", word: "eternal", meaning: "永遠の、不変の", partOfSpeech: "形容詞", example: "the hope of eternal life", exampleMeaning: "永遠の命の望み", mastered: false },
-  { id: "a463", word: "sole", meaning: "唯一の、単独で", partOfSpeech: "形容詞", example: "the sole survivor", exampleMeaning: "唯一の生存者", mastered: false },
-  { id: "a464", word: "sour", meaning: "すっぱい", partOfSpeech: "形容詞", example: "sour grapes", exampleMeaning: "すっぱいブドウ", mastered: false },
-  { id: "a465", word: "notable", meaning: "注目すべき", partOfSpeech: "形容詞", example: "a notable exception", exampleMeaning: "注目すべき例外", mastered: false },
-  { id: "a466", word: "affluent", meaning: "裕福な、豊富な", partOfSpeech: "形容詞", example: "an affluent society", exampleMeaning: "裕福な社会", mastered: false },
-  { id: "a467", word: "naked", meaning: "裸の", partOfSpeech: "形容詞", example: "a naked man", exampleMeaning: "裸の男", mastered: false },
-  { id: "a468", word: "vocal", meaning: "発声の、声の", partOfSpeech: "形容詞", example: "the vocal organ", exampleMeaning: "発声器官", mastered: false },
-  { id: "a469", word: "feminine", meaning: "女性の、女性的な", partOfSpeech: "形容詞", example: "feminine beauty", exampleMeaning: "女性の美しさ", mastered: false },
-  { id: "a470", word: "vacant", meaning: "空いている", partOfSpeech: "形容詞", example: "sit down in a vacant seat", exampleMeaning: "空いている席に座る", mastered: false },
-  { id: "a471", word: "exotic", meaning: "外来の、異国風の", partOfSpeech: "形容詞", example: "native and exotic animals", exampleMeaning: "在来と外来の動物", mastered: false },
-  { id: "a472", word: "rigid", meaning: "厳格な、がんこな", partOfSpeech: "形容詞", example: "rigid rules", exampleMeaning: "厳格な規則", mastered: false },
-  { id: "a473", word: "humid", meaning: "蒸し暑い、多湿の", partOfSpeech: "形容詞", example: "humid summer weather", exampleMeaning: "夏の蒸し暑い天気", mastered: false },
-  { id: "a474", word: "outstanding", meaning: "傑出した、目立った", partOfSpeech: "形容詞", example: "an outstanding scholar", exampleMeaning: "傑出した学者", mastered: false },
-  { id: "a475", word: "addicted", meaning: "中毒である、～に熱中した", partOfSpeech: "形容詞", example: "be addicted to drugs", exampleMeaning: "麻薬中毒である", mastered: false },
-  { id: "a476", word: "vulnerable", meaning: "攻撃を受けやすい、傷つきやすい", partOfSpeech: "形容詞", example: "be vulnerable to attack", exampleMeaning: "攻撃を受けやすい", mastered: false },
-  { id: "a477", word: "spontaneous", meaning: "自然に起こる、自発的な", partOfSpeech: "形容詞", example: "spontaneous laughter", exampleMeaning: "自然に起こる笑い", mastered: false },
-  { id: "a478", word: "greedy", meaning: "どん欲な", partOfSpeech: "形容詞", example: "be greedy for money", exampleMeaning: "金にどん欲だ", mastered: false },
-  { id: "a479", word: "trivial", meaning: "ささいな、とるに足らない", partOfSpeech: "形容詞", example: "a trivial matter", exampleMeaning: "ささいな事柄", mastered: false },
-  { id: "a480", word: "per", meaning: "～につき、～ごとに", partOfSpeech: "前置詞", example: "Japan's per capita income", exampleMeaning: "日本の一人当たりの国民所得", mastered: false },
-  { id: "a481", word: "inherent", meaning: "元から伴う、本来備わった", partOfSpeech: "形容詞", example: "the risks inherent in the sport", exampleMeaning: "そのスポーツに元から伴う危険", mastered: false },
-  { id: "a482", word: "promising", meaning: "前途有望な", partOfSpeech: "形容詞", example: "a promising new actress", exampleMeaning: "前途有望な新人女優", mastered: false },
-  { id: "a483", word: "physiological", meaning: "生理的な", partOfSpeech: "形容詞", example: "physiological reactions", exampleMeaning: "生理的な反応", mastered: false },
-  { id: "a484", word: "clinical", meaning: "臨床の", partOfSpeech: "形容詞", example: "clinical trials of new drugs", exampleMeaning: "新薬の臨床試験", mastered: false },
-  { id: "a485", word: "chronic", meaning: "慢性の", partOfSpeech: "形容詞", example: "chronic disease", exampleMeaning: "慢性の病気", mastered: false },
-  { id: "a486", word: "geological", meaning: "地質学的な", partOfSpeech: "形容詞", example: "divisions of geological time", exampleMeaning: "地質学的な時代区分", mastered: false },
-  { id: "a487", word: "countless", meaning: "無数の", partOfSpeech: "形容詞", example: "countless species of insects", exampleMeaning: "無数の種類の昆虫", mastered: false },
-  { id: "a488", word: "innate", meaning: "先天的な", partOfSpeech: "形容詞", example: "innate ability to learn", exampleMeaning: "先天的な学習能力", mastered: false },
-  { id: "a489", word: "alert", meaning: "用心する、頭がさえている", partOfSpeech: "形容詞", example: "be alert to every sound", exampleMeaning: "あらゆる音に用心する", mastered: false },
-  { id: "a490", word: "autonomous", meaning: "自動運転の、自立した、自律の", partOfSpeech: "形容詞", example: "autonomous cars", exampleMeaning: "自動運転車", mastered: false },
-  { id: "a491", word: "simultaneously", meaning: "同時に", partOfSpeech: "副詞", example: "occur simultaneously", exampleMeaning: "同時に起こる", mastered: false },
-  { id: "a492", word: "utterly", meaning: "まったく", partOfSpeech: "副詞", example: "utterly different from others", exampleMeaning: "他人とまったく異なる", mastered: false },
-  { id: "a493", word: "drastically", meaning: "劇的に、徹底的に", partOfSpeech: "副詞", example: "change drastically", exampleMeaning: "劇的に変化する", mastered: false },
-  { id: "a494", word: "necessarily", meaning: "必ずしも", partOfSpeech: "副詞", example: "not necessarily true", exampleMeaning: "必ずしも本当でない", mastered: false },
-  { id: "a495", word: "thereby", meaning: "そうすることで", partOfSpeech: "副詞", example: "He always tells the truth, thereby avoiding trouble.", exampleMeaning: "彼はいつも真実を述べ、そうすることでトラブルを避けている", mastered: false },
-  { id: "a496", word: "frankly", meaning: "率直に", partOfSpeech: "副詞", example: "speak frankly", exampleMeaning: "率直に話す", mastered: false },
-  { id: "a497", word: "namely", meaning: "すなわち", partOfSpeech: "副詞", example: "the two cities, namely Paris and Tokyo", exampleMeaning: "その2つの都市、すなわちパリと東京", mastered: false },
-  { id: "a498", word: "hence", meaning: "だから", partOfSpeech: "副詞", example: "He tried hard, hence his success.", exampleMeaning: "彼は努力した。だから成功した。", mastered: false },
-  { id: "a499", word: "via", meaning: "～経由で", partOfSpeech: "前置詞", example: "pay bills via the Internet", exampleMeaning: "インターネット経由で代金を払う", mastered: false },
-  { id: "a500", word: "owing", meaning: "～のために", partOfSpeech: "前置詞", example: "owing to lack of fuel", exampleMeaning: "燃料不足のために", mastered: false },
-    ]
-    }
+{ id: "a415", word: "pill", meaning: "錠剤、薬", partOfSpeech: "名詞", example: "take sleeping pills", exampleMeaning: "睡眠薬を飲む", mastered: false},
+{ id: "a416", word: "grave", meaning: "重大な、重々しい", partOfSpeech: "形容詞", example: "be in grave danger", exampleMeaning: "重大な危険にある", mastered: false },
+{ id: "a417", word: "fertile", meaning: "肥えた", partOfSpeech: "形容詞", example: "fertile soil", exampleMeaning: "肥えた土壌", mastered: false },
+{ id: "a418", word: "hostile", meaning: "敵意を持った、反感を持つ", partOfSpeech: "形容詞", example: "be hostile to the government", exampleMeaning: "政府に反感を持つ", mastered: false },
+{ id: "a419", word: "indispensable", meaning: "不可欠な", partOfSpeech: "形容詞", example: "Water is indispensable to life.", exampleMeaning: "水は生命にとって不可欠だ。", mastered: false },
+{ id: "a420", word: "oriented", meaning: "志向の、関心がある", partOfSpeech: "形容詞", example: "an information-oriented society", exampleMeaning: "情報志向の社会", mastered: false },
+{ id: "a421", word: "splendid", meaning: "すばらしい、壮麗な", partOfSpeech: "形容詞", example: "a splendid view", exampleMeaning: "すばらしい景色", mastered: false },
+{ id: "a422", word: "competent", meaning: "有能な", partOfSpeech: "形容詞", example: "a competent teacher", exampleMeaning: "有能な教師", mastered: false },
+{ id: "a423", word: "supreme", meaning: "最高の", partOfSpeech: "形容詞", example: "supreme joy", exampleMeaning: "最高の喜び", mastered: false },
+{ id: "a424", word: "straightforward", meaning: "わかりやすい、簡単な、率直な", partOfSpeech: "形容詞", example: "straightforward language", exampleMeaning: "わかりやすい言葉遣い", mastered: false },
+{ id: "a425", word: "sacred", meaning: "神聖な", partOfSpeech: "形容詞", example: "a land sacred to Islam", exampleMeaning: "イスラム教徒の聖地", mastered: false },
+{ id: "a426", word: "bold", meaning: "大胆な", partOfSpeech: "形容詞", example: "take bold action", exampleMeaning: "大胆な行動をとる", mastered: false },
+{ id: "a427", word: "uneasy", meaning: "不安な", partOfSpeech: "形容詞", example: "feel uneasy about the future", exampleMeaning: "将来について不安な気持ちになる", mastered: false },
+{ id: "a428", word: "neat", meaning: "きちんとした、こきれいな", partOfSpeech: "形容詞", example: "neat clothes", exampleMeaning: "きちんとした服", mastered: false },
+{ id: "a429", word: "shallow", meaning: "浅い、浅はかな", partOfSpeech: "形容詞", example: "a shallow river", exampleMeaning: "浅い川", mastered: false },
+{ id: "a430", word: "fake", meaning: "にせ物の", partOfSpeech: "形容詞", example: "make a fake cake", exampleMeaning: "にせ物のケーキを作る", mastered: false },
+{ id: "a431", word: "superficial", meaning: "表面的な、うわべの", partOfSpeech: "形容詞", example: "a superficial difference", exampleMeaning: "表面的な違い", mastered: false },
+{ id: "a432", word: "absurd", meaning: "ばかげた", partOfSpeech: "形容詞", example: "a completely absurd idea", exampleMeaning: "まったくばかげた考え", mastered: false },
+{ id: "a433", word: "fragile", meaning: "壊れやすい、もろい", partOfSpeech: "形容詞", example: "fragile items", exampleMeaning: "壊れやすい物", mastered: false },
+{ id: "a434", word: "respectable", meaning: "ちゃんとした、立派な", partOfSpeech: "形容詞", example: "a girl from a respectable family", exampleMeaning: "ちゃんとした家の娘", mastered: false },
+{ id: "a435", word: "magnificent", meaning: "すばらしい、立派な", partOfSpeech: "形容詞", example: "a magnificent view", exampleMeaning: "すばらしい光景", mastered: false },
+{ id: "a436", word: "infinite", meaning: "無限の", partOfSpeech: "形容詞", example: "an infinite number of stars", exampleMeaning: "無限の数の星", mastered: false },
+{ id: "a437", word: "comprehensive", meaning: "包括的な、総合的な", partOfSpeech: "形容詞", example: "a comprehensive study", exampleMeaning: "包括的な研究", mastered: false },
+{ id: "a438", word: "steep", meaning: "険しい", partOfSpeech: "形容詞", example: "a steep slope", exampleMeaning: "険しい坂", mastered: false },
+{ id: "a439", word: "gross", meaning: "総計の", partOfSpeech: "形容詞", example: "the gross domestic product", exampleMeaning: "国内総生産", mastered: false },
+{ id: "a440", word: "subsequent", meaning: "次に起こる、後の", partOfSpeech: "形容詞", example: "prepare for subsequent events", exampleMeaning: "次に起こる出来事に備える", mastered: false },
+{ id: "a441", word: "sincere", meaning: "心からの、誠実な", partOfSpeech: "形容詞", example: "my sincere apologies", exampleMeaning: "私の心からの謝罪", mastered: false },
+{ id: "a442", word: "toxic", meaning: "有毒な", partOfSpeech: "形容詞", example: "a toxic gas", exampleMeaning: "有毒なガス", mastered: false },
+{ id: "a443", word: "neutral", meaning: "中立の、公平な", partOfSpeech: "形容詞", example: "take a neutral position", exampleMeaning: "中立の立場をとる", mastered: false },
+{ id: "a444", word: "diligent", meaning: "勤勉な", partOfSpeech: "形容詞", example: "a diligent student", exampleMeaning: "勤勉な学生", mastered: false },
+{ id: "a445", word: "sore", meaning: "痛い", partOfSpeech: "形容詞", example: "have a sore throat", exampleMeaning: "のどが痛い", mastered: false },
+{ id: "a446", word: "contaminated", meaning: "汚染された", partOfSpeech: "形容詞", example: "drink contaminated water", exampleMeaning: "汚染された水を飲む", mastered: false },
+{ id: "a447", word: "ambiguous", meaning: "あいまいな、多義的な", partOfSpeech: "形容詞", example: "an ambiguous expression", exampleMeaning: "あいまいな表現", mastered: false },
+{ id: "a448", word: "oral", meaning: "口述の", partOfSpeech: "形容詞", example: "an oral examination", exampleMeaning: "口述の試験", mastered: false },
+{ id: "a449", word: "restless", meaning: "落ち着かない、不安な", partOfSpeech: "形容詞", example: "spend a restless night", exampleMeaning: "落ち着かない夜を過ごす", mastered: false },
+{ id: "a450", word: "rotten", meaning: "腐った", partOfSpeech: "形容詞", example: "smell like rotten eggs", exampleMeaning: "腐った卵のようににおう", mastered: false },
+{ id: "a451", word: "vigorous", meaning: "精力的な", partOfSpeech: "形容詞", example: "vigorous activity", exampleMeaning: "精力的な活動", mastered: false },
+{ id: "a452", word: "immense", meaning: "莫大な、計り知れぬ", partOfSpeech: "形容詞", example: "an immense amount of information", exampleMeaning: "莫大な量の情報", mastered: false },
+{ id: "a453", word: "metropolitan", meaning: "大都市の", partOfSpeech: "形容詞", example: "metropolitan areas", exampleMeaning: "大都市圏", mastered: false },
+{ id: "a454", word: "punctual", meaning: "時間をきっちり守る", partOfSpeech: "形容詞", example: "be punctual for an appointment", exampleMeaning: "約束の時間をきっちり守る", mastered: false },
+{ id: "a455", word: "solitary", meaning: "孤独な、寂しい", partOfSpeech: "形容詞", example: "a solitary old man", exampleMeaning: "孤独な老人", mastered: false },
+{ id: "a456", word: "collective", meaning: "集団の、集合的な", partOfSpeech: "形容詞", example: "take collective action", exampleMeaning: "集団行動を起こす", mastered: false },
+{ id: "a457", word: "diplomatic", meaning: "外交的な", partOfSpeech: "形容詞", example: "break off diplomatic relations", exampleMeaning: "外交関係を断絶する", mastered: false },
+{ id: "a458", word: "nasty", meaning: "不快な、嫌な", partOfSpeech: "形容詞", example: "a nasty smell", exampleMeaning: "不快なにおい", mastered: false },
+{ id: "a459", word: "helpless", meaning: "無力な", partOfSpeech: "形容詞", example: "a helpless baby", exampleMeaning: "無力な赤ん坊", mastered: false },
+{ id: "a460", word: "explicit", meaning: "明確な、露骨な", partOfSpeech: "形容詞", example: "give explicit instructions", exampleMeaning: "明確な指示を与える", mastered: false },
+{ id: "a461", word: "bankrupt", meaning: "破産した", partOfSpeech: "形容詞", example: "His company went bankrupt.", exampleMeaning: "彼の会社は破産した。", mastered: false },
+{ id: "a462", word: "eternal", meaning: "永遠の、不変の", partOfSpeech: "形容詞", example: "the hope of eternal life", exampleMeaning: "永遠の命の望み", mastered: false },
+{ id: "a463", word: "sole", meaning: "唯一の、単独で", partOfSpeech: "形容詞", example: "the sole survivor", exampleMeaning: "唯一の生存者", mastered: false },
+{ id: "a464", word: "sour", meaning: "すっぱい", partOfSpeech: "形容詞", example: "sour grapes", exampleMeaning: "すっぱいブドウ", mastered: false },
+{ id: "a465", word: "notable", meaning: "注目すべき", partOfSpeech: "形容詞", example: "a notable exception", exampleMeaning: "注目すべき例外", mastered: false },
+{ id: "a466", word: "affluent", meaning: "裕福な、豊富な", partOfSpeech: "形容詞", example: "an affluent society", exampleMeaning: "裕福な社会", mastered: false },
+{ id: "a467", word: "naked", meaning: "裸の", partOfSpeech: "形容詞", example: "a naked man", exampleMeaning: "裸の男", mastered: false },
+{ id: "a468", word: "vocal", meaning: "発声の、声の", partOfSpeech: "形容詞", example: "the vocal organ", exampleMeaning: "発声器官", mastered: false },  { id: "a469", word: "feminine", meaning: "女性の、女性的な", partOfSpeech: "形容詞", example: "feminine beauty", exampleMeaning: "女性の美しさ", mastered: false },  { id: "a470", word: "vacant", meaning: "空いている", partOfSpeech: "形容詞", example: "sit down in a vacant seat", exampleMeaning: "空いている席に座る", mastered: false },
+{ id: "a471", word: "exotic", meaning: "外来の、異国風の", partOfSpeech: "形容詞", example: "native and exotic animals", exampleMeaning: "在来と外来の動物", mastered: false },
+{ id: "a472", word: "rigid", meaning: "厳格な、がんこな", partOfSpeech: "形容詞", example: "rigid rules", exampleMeaning: "厳格な規則", mastered: false },
+{ id: "a473", word: "humid", meaning: "蒸し暑い、多湿の", partOfSpeech: "形容詞", example: "humid summer weather", exampleMeaning: "夏の蒸し暑い天気", mastered: false },
+{ id: "a474", word: "outstanding", meaning: "傑出した、目立った", partOfSpeech: "形容詞", example: "an outstanding scholar", exampleMeaning: "傑出した学者", mastered: false },
+{ id: "a475", word: "addicted", meaning: "中毒である、～に熱中した", partOfSpeech: "形容詞", example: "be addicted to drugs", exampleMeaning: "麻薬中毒である", mastered: false },
+{ id: "a476", word: "vulnerable", meaning: "攻撃を受けやすい、傷つきやすい", partOfSpeech: "形容詞", example: "be vulnerable to attack", exampleMeaning: "攻撃を受けやすい", mastered: false },
+{ id: "a477", word: "spontaneous", meaning: "自然に起こる、自発的な", partOfSpeech: "形容詞", example: "spontaneous laughter", exampleMeaning: "自然に起こる笑い", mastered: false },
+{ id: "a478", word: "greedy", meaning: "どん欲な", partOfSpeech: "形容詞", example: "be greedy for money", exampleMeaning: "金にどん欲だ", mastered: false },
+{ id: "a479", word: "trivial", meaning: "ささいな、とるに足らない", partOfSpeech: "形容詞", example: "a trivial matter", exampleMeaning: "ささいな事柄", mastered: false },
+{ id: "a480", word: "per", meaning: "～につき、～ごとに", partOfSpeech: "前置詞", example: "Japan's per capita income", exampleMeaning: "日本の一人当たりの国民所得", mastered: false },
+{ id: "a481", word: "inherent", meaning: "元から伴う、本来備わった", partOfSpeech: "形容詞", example: "the risks inherent in the sport", exampleMeaning: "そのスポーツに元から伴う危険", mastered: false },
+{ id: "a482", word: "promising", meaning: "前途有望な", partOfSpeech: "形容詞", example: "a promising new actress", exampleMeaning: "前途有望な新人女優", mastered: false },
+{ id: "a483", word: "physiological", meaning: "生理的な", partOfSpeech: "形容詞", example: "physiological reactions", exampleMeaning: "生理的な反応", mastered: false },
+{ id: "a484", word: "clinical", meaning: "臨床の", partOfSpeech: "形容詞", example: "clinical trials of new drugs", exampleMeaning: "新薬の臨床試験", mastered: false },
+{ id: "a485", word: "chronic", meaning: "慢性の", partOfSpeech: "形容詞", example: "chronic disease", exampleMeaning: "慢性の病気", mastered: false },
+{ id: "a486", word: "geological", meaning: "地質学的な", partOfSpeech: "形容詞", example: "divisions of geological time", exampleMeaning: "地質学的な時代区分", mastered: false },
+{ id: "a487", word: "countless", meaning: "無数の", partOfSpeech: "形容詞", example: "countless species of insects", exampleMeaning: "無数の種類の昆虫", mastered: false },
+{ id: "a488", word: "innate", meaning: "先天的な", partOfSpeech: "形容詞", example: "innate ability to learn", exampleMeaning: "先天的な学習能力", mastered: false },
+{ id: "a489", word: "alert", meaning: "用心する、頭がさえている", partOfSpeech: "形容詞", example: "be alert to every sound", exampleMeaning: "あらゆる音に用心する", mastered: false },
+{ id: "a490", word: "autonomous", meaning: "自動運転の、自立した、自律の", partOfSpeech: "形容詞", example: "autonomous cars", exampleMeaning: "自動運転車", mastered: false },
+{ id: "a491", word: "simultaneously", meaning: "同時に", partOfSpeech: "副詞", example: "occur simultaneously", exampleMeaning: "同時に起こる", mastered: false },
+{ id: "a492", word: "utterly", meaning: "まったく", partOfSpeech: "副詞", example: "utterly different from others", exampleMeaning: "他人とまったく異なる", mastered: false },
+{ id: "a493", word: "drastically", meaning: "劇的に、徹底的に", partOfSpeech: "副詞", example: "change drastically", exampleMeaning: "劇的に変化する", mastered: false },
+{ id: "a494", word: "necessarily", meaning: "必ずしも", partOfSpeech: "副詞", example: "not necessarily true", exampleMeaning: "必ずしも本当でない", mastered: false },
+{ id: "a495", word: "thereby", meaning: "そうすることで", partOfSpeech: "副詞", example: "He always tells the truth, thereby avoiding trouble.", exampleMeaning: "彼はいつも真実を述べ、そうすることでトラブルを避けている", mastered: false },
+{ id: "a496", word: "frankly", meaning: "率直に", partOfSpeech: "副詞", example: "speak frankly", exampleMeaning: "率直に話す", mastered: false }, { id: "a497", word: "namely", meaning: "すなわち", partOfSpeech: "副詞", example: "the two cities, namely Paris and Tokyo", exampleMeaning: "その2つの都市、すなわちパリと東京", mastered: false },
+{ id: "a498", word: "hence", meaning: "だから", partOfSpeech: "副詞", example: "He tried hard, hence his success.", exampleMeaning: "彼は努力した。だから成功した。", mastered: false },
+{ id: "a499", word: "via", meaning: "～経由で", partOfSpeech: "前置詞", example: "pay bills via the Internet", exampleMeaning: "インターネット経由で代金を払う", mastered: false },
+{ id: "a500", word: "owing", meaning: "～のために", partOfSpeech: "前置詞", example: "owing to lack of fuel", exampleMeaning: "燃料不足のために", mastered: false },
+
+          
+        ]
+      }
     ];
 
     // COLOR MAP FOR CARDS
@@ -603,7 +606,6 @@
     const IconDownload = () => <svg className="w-4 h-4 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>;
     const IconUpload = () => <svg className="w-4 h-4 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>;
     const IconArrowLeft = () => <svg className="w-5 h-5 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>;
-    const IconBook = () => <svg className="w-6 h-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>;
     const IconLayers = () => <svg className="w-5 h-5 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>;
     const IconSparkles = () => <svg className="w-6 h-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>;
 
@@ -628,6 +630,9 @@
       // View state: 'deck-list', 'card-manage', 'study'
       const [currentView, setCurrentView] = useState('deck-list');
       const [activeDeckId, setActiveDeckId] = useState(null);
+      
+      // Study mode: 'word-to-meaning' (単語→意味) or 'meaning-to-word' (意味→単語)
+      const [studyMode, setStudyMode] = useState('word-to-meaning');
 
       // Modals
       const [deckModalOpen, setDeckModalOpen] = useState(false);
@@ -729,9 +734,8 @@
                 className="flex items-center space-x-2 cursor-pointer select-none"
                 onClick={() => { setCurrentView('deck-list'); setActiveDeckId(null); }}
               >
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-white shadow-md">
-                  <IconBook />
-                </div>
+                {/* icon.png 画像アイコン */}
+                <img src="icon.png" alt="VocabMaster Logo" className="w-10 h-10 rounded-xl object-cover shadow-md" />
                 <div>
                   <h1 className="font-bold text-lg leading-none text-slate-800">VocabMaster</h1>
                   <p className="text-xs text-slate-500 font-medium">英単語フラッシュカード</p>
@@ -762,8 +766,9 @@
             {currentView === 'deck-list' && (
               <DeckListView 
                 decks={decks} 
-                onSelectDeck={(deckId, view) => {
+                onSelectDeck={(deckId, view, mode = 'word-to-meaning') => {
                   setActiveDeckId(deckId);
+                  setStudyMode(mode);
                   setCurrentView(view);
                 }}
                 onNewDeck={() => { setEditingDeck(null); setDeckModalOpen(true); }}
@@ -778,13 +783,17 @@
                 deck={activeDeck} 
                 onBack={() => setCurrentView('deck-list')}
                 onUpdateCards={handleUpdateCards}
-                onStartStudy={() => setCurrentView('study')}
+                onStartStudy={(mode) => {
+                  setStudyMode(mode);
+                  setCurrentView('study');
+                }}
               />
             )}
 
             {currentView === 'study' && activeDeck && (
               <StudyView 
                 deck={activeDeck} 
+                studyMode={studyMode}
                 onBack={() => setCurrentView('deck-list')}
                 onUpdateCards={handleUpdateCards}
               />
@@ -894,24 +903,39 @@
                       </div>
                     </div>
 
-                    {/* Action Buttons */}
-                    <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
+                    {/* Mode Selection Action Buttons */}
+                    <div className="space-y-2 pt-2 border-t border-slate-100">
+                      <div className="text-[11px] font-bold text-slate-400 tracking-wider text-center">学習モードを選択</div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          onClick={() => onSelectDeck(deck.id, 'study', 'word-to-meaning')}
+                          disabled={total === 0}
+                          className={`py-2 px-2 text-xs font-semibold text-white rounded-xl transition flex items-center justify-center space-x-1 ${
+                            total === 0 ? 'bg-slate-300 cursor-not-allowed' : `${colorTheme.bg} hover:opacity-95 shadow-sm`
+                          }`}
+                          title="英単語を見て日本語の意味を答える"
+                        >
+                          <IconPlay />
+                          <span>単語 → 意味</span>
+                        </button>
+                        <button
+                          onClick={() => onSelectDeck(deck.id, 'study', 'meaning-to-word')}
+                          disabled={total === 0}
+                          className={`py-2 px-2 text-xs font-semibold text-white rounded-xl transition flex items-center justify-center space-x-1 ${
+                            total === 0 ? 'bg-slate-300 cursor-not-allowed' : 'bg-slate-800 hover:bg-slate-700 shadow-sm'
+                          }`}
+                          title="日本語の意味を見て英単語を答える"
+                        >
+                          <IconPlay />
+                          <span>意味 → 単語</span>
+                        </button>
+                      </div>
                       <button
                         onClick={() => onSelectDeck(deck.id, 'card-manage')}
-                        className="py-2 px-3 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition flex items-center justify-center space-x-1"
+                        className="w-full py-1.5 px-3 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition flex items-center justify-center space-x-1"
                       >
                         <IconLayers />
-                        <span>単語管理</span>
-                      </button>
-                      <button
-                        onClick={() => onSelectDeck(deck.id, 'study')}
-                        disabled={total === 0}
-                        className={`py-2 px-3 text-xs font-semibold text-white rounded-xl transition flex items-center justify-center space-x-1 ${
-                          total === 0 ? 'bg-slate-300 cursor-not-allowed' : `${colorTheme.bg} hover:opacity-95 shadow-sm`
-                        }`}
-                      >
-                        <IconPlay />
-                        <span>学習開始</span>
+                        <span>単語の編集・管理</span>
                       </button>
                     </div>
                   </div>
@@ -1010,13 +1034,13 @@
               </div>
             </div>
 
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => setBulkModalOpen(true)}
                 className="px-3 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition flex items-center space-x-1"
               >
                 <IconPlus />
-                <span>クイック一括登録</span>
+                <span>一括登録</span>
               </button>
               <button
                 onClick={() => { setEditingCard(null); setCardModalOpen(true); }}
@@ -1026,14 +1050,24 @@
                 <span>単語を追加</span>
               </button>
               <button
-                onClick={onStartStudy}
+                onClick={() => onStartStudy('word-to-meaning')}
                 disabled={deck.cards.length === 0}
-                className={`px-4 py-2 text-xs font-semibold text-white rounded-xl shadow transition flex items-center space-x-1 ${
+                className={`px-3 py-2 text-xs font-semibold text-white rounded-xl shadow transition flex items-center space-x-1 ${
                   deck.cards.length === 0 ? 'bg-slate-300 cursor-not-allowed' : `${colorTheme.bg} hover:opacity-90`
                 }`}
               >
                 <IconPlay />
-                <span>学習モードへ</span>
+                <span>単語→意味</span>
+              </button>
+              <button
+                onClick={() => onStartStudy('meaning-to-word')}
+                disabled={deck.cards.length === 0}
+                className={`px-3 py-2 text-xs font-semibold text-white rounded-xl shadow transition flex items-center space-x-1 ${
+                  deck.cards.length === 0 ? 'bg-slate-300 cursor-not-allowed' : 'bg-slate-800 hover:bg-slate-700'
+                }`}
+              >
+                <IconPlay />
+                <span>意味→単語</span>
               </button>
             </div>
           </div>
@@ -1090,7 +1124,7 @@
           {filteredCards.length === 0 ? (
             <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center text-slate-400">
               <p className="text-base font-medium">該当する単語カードが見つかりません</p>
-              <p className="text-xs mt-1">「単語を追加」または「クイック一括登録」から単語を追加してみましょう。</p>
+              <p className="text-xs mt-1">「単語を追加」または「一括登録」から単語を追加してみましょう。</p>
             </div>
           ) : (
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
@@ -1193,7 +1227,7 @@
     }
 
     // --- FLASHCARD STUDY VIEW ---
-    function StudyView({ deck, onBack, onUpdateCards }) {
+    function StudyView({ deck, studyMode = 'word-to-meaning', onBack, onUpdateCards }) {
       const [cards, setCards] = useState(() => [...deck.cards]);
       const [currentIndex, setCurrentIndex] = useState(0);
       const [isFlipped, setIsFlipped] = useState(false);
@@ -1204,6 +1238,11 @@
 
       const currentCard = cards[currentIndex];
       const colorTheme = COLOR_MAP[deck.color] || COLOR_MAP.indigo;
+
+      // カード切り替え時に表面へリセット
+      useEffect(() => {
+        setIsFlipped(false);
+      }, [currentIndex]);
 
       // Keyboard Shortcuts
       useEffect(() => {
@@ -1224,12 +1263,16 @@
         return () => window.removeEventListener('keydown', handleKeyDown);
       }, [currentIndex, isFlipped, sessionCompleted, currentCard]);
 
-      // TTS Auto speak on card change
+      // TTS Auto speak based on mode and flip state
       useEffect(() => {
-        if (currentCard && autoSpeech && !isFlipped && !sessionCompleted) {
-          speakText(currentCard.word);
+        if (currentCard && autoSpeech && !sessionCompleted) {
+          if (studyMode === 'word-to-meaning' && !isFlipped) {
+            speakText(currentCard.word);
+          } else if (studyMode === 'meaning-to-word' && isFlipped) {
+            speakText(currentCard.word);
+          }
         }
-      }, [currentIndex, autoSpeech, sessionCompleted]);
+      }, [currentIndex, isFlipped, autoSpeech, sessionCompleted, studyMode]);
 
       // Auto Flip Timer Logic
       useEffect(() => {
@@ -1314,13 +1357,15 @@
               <span>終了</span>
             </button>
 
-            {/* Progress Counter */}
+            {/* Mode Badge & Progress Counter */}
             {!sessionCompleted && (
               <div className="text-center">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">PROGRESS</span>
-                <span className="text-base font-extrabold text-slate-800">
-                  {currentIndex + 1} <span className="text-slate-400 font-normal">/ {cards.length}</span>
+                <span className="text-[10px] font-extrabold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-full mb-1 inline-block">
+                  {studyMode === 'word-to-meaning' ? '単語 → 意味' : '意味 → 単語'}
                 </span>
+                <div className="text-base font-extrabold text-slate-800 leading-none">
+                  {currentIndex + 1} <span className="text-slate-400 font-normal">/ {cards.length}</span>
+                </div>
               </div>
             )}
 
@@ -1374,67 +1419,118 @@
               >
                 <div className={`relative w-full h-full duration-500 transform-style-3d transition-transform ${isFlipped ? 'rotate-y-180' : ''}`}>
                   
-                  {/* FRONT SIDE (English Word) */}
+                  {/* FRONT SIDE */}
                   <div className="absolute inset-0 w-full h-full bg-white border-2 border-slate-200 rounded-3xl p-8 flex flex-col justify-between items-center text-center shadow-lg backface-hidden">
                     <div className="w-full flex justify-between items-center text-xs text-slate-400 font-semibold">
-                      <span>{deck.title}</span>
+                      <span>{deck.title} ({studyMode === 'word-to-meaning' ? '単語' : '意味'})</span>
                       <span className="flex items-center space-x-1">
                         <IconRotate /> <span>クリックまたは Space で裏返す</span>
                       </span>
                     </div>
 
-                    <div className="my-auto space-y-3">
-                      {currentCard.partOfSpeech && (
-                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600">
-                          {currentCard.partOfSpeech}
-                        </span>
+                    <div className="my-auto space-y-3 max-w-lg w-full">
+                      {studyMode === 'word-to-meaning' ? (
+                        <>
+                          {currentCard.partOfSpeech && (
+                            <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600">
+                              {currentCard.partOfSpeech}
+                            </span>
+                          )}
+                          <h3 className="text-3xl sm:text-5xl font-extrabold text-slate-800 tracking-tight">
+                            {currentCard.word}
+                          </h3>
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); speakText(currentCard.word); }}
+                            className="p-3 bg-brand-50 hover:bg-brand-100 text-brand-600 rounded-full transition inline-flex items-center justify-center mt-2"
+                            title="発音を聞く [Key S]"
+                          >
+                            <IconVolume />
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          {currentCard.partOfSpeech && (
+                            <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600">
+                              {currentCard.partOfSpeech}
+                            </span>
+                          )}
+                          <h3 className="text-2xl sm:text-4xl font-extrabold text-slate-800 tracking-tight">
+                            {currentCard.meaning}
+                          </h3>
+                        </>
                       )}
-                      <h3 className="text-3xl sm:text-5xl font-extrabold text-slate-800 tracking-tight">
-                        {currentCard.word}
-                      </h3>
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); speakText(currentCard.word); }}
-                        className="p-3 bg-brand-50 hover:bg-brand-100 text-brand-600 rounded-full transition inline-flex items-center justify-center mt-2"
-                        title="発音を聞く [Key S]"
-                      >
-                        <IconVolume />
-                      </button>
                     </div>
 
                     <div className="text-xs text-slate-400 font-medium">
-                      カード裏面に日本語の訳が表示されます
+                      {studyMode === 'word-to-meaning' ? '裏面に日本語の訳が表示されます' : '裏面に英単語と例文が表示されます'}
                     </div>
                   </div>
 
-                  {/* BACK SIDE (Japanese Meaning & Example) */}
+                  {/* BACK SIDE */}
                   <div className="absolute inset-0 w-full h-full bg-slate-900 text-white rounded-3xl p-8 flex flex-col justify-between items-center text-center shadow-xl backface-hidden rotate-y-180">
                     <div className="w-full flex justify-between items-center text-xs text-slate-400">
-                      <span>意味 & 例文</span>
+                      <span>{studyMode === 'word-to-meaning' ? '意味 & 例文' : '英単語 & 例文'}</span>
                       <span className="flex items-center space-x-1">
                         <IconRotate /> <span>表面に戻る</span>
                       </span>
                     </div>
 
-                    <div className="my-auto space-y-4 max-w-lg">
-                      <div className="text-2xl sm:text-3xl font-bold text-emerald-400">
-                        {currentCard.meaning}
-                      </div>
+                    <div className="my-auto space-y-4 max-w-lg w-full">
+                      {studyMode === 'word-to-meaning' ? (
+                        <>
+                          <div className="text-2xl sm:text-3xl font-bold text-emerald-400">
+                            {currentCard.meaning}
+                          </div>
 
-                      {currentCard.example && (
-                        <div className="bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80 text-left space-y-1.5 mt-2">
-                          <div className="flex items-start justify-between">
-                            <p className="text-sm font-medium text-slate-200 italic">"{currentCard.example}"</p>
+                          {currentCard.example && (
+                            <div className="bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80 text-left space-y-1.5 mt-2">
+                              <div className="flex items-start justify-between">
+                                <p className="text-sm font-medium text-slate-200 italic">"{currentCard.example}"</p>
+                                <button 
+                                  onClick={(e) => { e.stopPropagation(); speakText(currentCard.example); }}
+                                  className="p-1 text-slate-400 hover:text-white shrink-0 ml-2"
+                                >
+                                  <IconVolume />
+                                </button>
+                              </div>
+                              {currentCard.exampleMeaning && (
+                                <p className="text-xs text-slate-400">{currentCard.exampleMeaning}</p>
+                              )}
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex items-center justify-center space-x-3">
+                            <h3 className="text-3xl sm:text-4xl font-extrabold text-emerald-400 tracking-tight">
+                              {currentCard.word}
+                            </h3>
                             <button 
-                              onClick={(e) => { e.stopPropagation(); speakText(currentCard.example); }}
-                              className="p-1 text-slate-400 hover:text-white shrink-0 ml-2"
+                              onClick={(e) => { e.stopPropagation(); speakText(currentCard.word); }}
+                              className="p-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 rounded-full transition"
+                              title="発音を聞く"
                             >
                               <IconVolume />
                             </button>
                           </div>
-                          {currentCard.exampleMeaning && (
-                            <p className="text-xs text-slate-400">{currentCard.exampleMeaning}</p>
+
+                          {currentCard.example && (
+                            <div className="bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80 text-left space-y-1.5 mt-2">
+                              <div className="flex items-start justify-between">
+                                <p className="text-sm font-medium text-slate-200 italic">"{currentCard.example}"</p>
+                                <button 
+                                  onClick={(e) => { e.stopPropagation(); speakText(currentCard.example); }}
+                                  className="p-1 text-slate-400 hover:text-white shrink-0 ml-2"
+                                >
+                                  <IconVolume />
+                                </button>
+                              </div>
+                              {currentCard.exampleMeaning && (
+                                <p className="text-xs text-slate-400">{currentCard.exampleMeaning}</p>
+                              )}
+                            </div>
                           )}
-                        </div>
+                        </>
                       )}
                     </div>
 
