@@ -70,44 +70,104 @@
     // --- SAMPLE DEFAULT DECKS ---
     const DEFAULT_DECKS = [
       {
-        id: "deck_daily",
-        title: "日常英会話ハイクラス",
-        description: "ネイティブが会話でよく使う、ニュアンスのある必須英単語",
+        id: "system_s3",
+        title: "システム英単語 Stage3",
+        description: "システム英単語 Stage3",
         color: "indigo",
         createdAt: Date.now() - 1000000,
         cards: [
-          { id: "c1", word: "subtle", meaning: "かすかな、微妙な、繊細な", partOfSpeech: "形容詞", example: "There is a subtle difference between the two options.", exampleMeaning: "その2つの選択肢には微妙な違いがある。", mastered: false },
-          { id: "c2", word: "reluctant", meaning: "気が進まない、乗り気でない", partOfSpeech: "形容詞", example: "She was reluctant to leave the party early.", exampleMeaning: "彼女はパーティーを早く抜けるのに気が進まなかった。", mastered: true },
-          { id: "c3", word: "ambiguous", meaning: "曖昧な、多義的な", partOfSpeech: "形容詞", example: "His answer was ambiguous and left us confused.", exampleMeaning: "彼の返答は曖昧で私たちは混乱した。", mastered: false },
-          { id: "c4", word: "articulate", meaning: "明瞭に話す、考えを滑舌良く伝える", partOfSpeech: "動詞 / 形容詞", example: "He is very articulate when presenting his ideas.", exampleMeaning: "彼は自分の考えを発表するとき非常にわかりやすく話す。", mastered: false },
-          { id: "c5", word: "pragmatic", meaning: "実践的な、現実的な", partOfSpeech: "形容詞", example: "We need a pragmatic solution to this ongoing issue.", exampleMeaning: "この進行中の問題には現実的な解決策が必要だ。", mastered: true },
-          { id: "c6", word: "scrutinize", meaning: "詳細に調べる、監視する", partOfSpeech: "動詞", example: "The auditors will scrutinize the financial records.", exampleMeaning: "監査人は財務記録を細かく精査する予定だ。", mastered: false }
-        ]
-      },
-      {
-        id: "deck_biz",
-        title: "ビジネス英語重要単語",
-        description: "会議、メール、交渉で頻出する実用ビジネス語彙",
-        color: "emerald",
-        createdAt: Date.now() - 500000,
-        cards: [
-          { id: "b1", word: "leverage", meaning: "活用する、てこ入れする", partOfSpeech: "動詞 / 名詞", example: "We should leverage our market research to boost sales.", exampleMeaning: "売上を伸ばすために市場調査を活用すべきだ。", mastered: false },
-          { id: "b2", word: "bottleneck", meaning: "ボトルネック、進行の障害", partOfSpeech: "名詞", example: "Supply delays are creating a major bottleneck.", exampleMeaning: "供給の遅れが大きなボトルネックを生んでいる。", mastered: false },
-          { id: "b3", word: "implement", meaning: "実行する、導入する", partOfSpeech: "動詞", example: "We plan to implement the new system next month.", exampleMeaning: "来月新しいシステムを導入する予定です。", mastered: true },
-          { id: "b4", word: "benchmark", meaning: "基準、比較指標", partOfSpeech: "名詞", example: "Our performance set a new benchmark for the industry.", exampleMeaning: "当社の業績は業界の新しい基準となった。", mastered: false },
-          { id: "b5", word: "feasibility", meaning: "実現可能性", partOfSpeech: "名詞", example: "They are conducting a feasibility study on the project.", exampleMeaning: "彼らはそのプロジェクトの実現可能性調査を行っている。", mastered: false }
-        ]
-      },
-      {
-        id: "deck_toeic",
-        title: "TOEIC頻出単語",
-        description: "スコアアップに直結する必須語句セット",
-        color: "amber",
-        createdAt: Date.now(),
-        cards: [
-          { id: "t1", word: "accommodate", meaning: "収容する、要望に応える", partOfSpeech: "動詞", example: "The hall can accommodate up to 500 guests.", exampleMeaning: "そのホールは500名までのゲストを収容できる。", mastered: false },
-          { id: "t2", word: "itinerary", meaning: "旅行日程、行程表", partOfSpeech: "名詞", example: "Please check your flight itinerary carefully.", exampleMeaning: "フライトの行程表をよく確認してください。", mastered: false },
-          { id: "t3", word: "designated", meaning: "指定された、指名された", partOfSpeech: "形容詞", example: "Please smoke only in designated areas.", exampleMeaning: "指定された場所でのみ喫煙してください。", mastered: true }
+          
+          {
+    id: "a1",
+    word: "submit",
+    meaning: "Aに服従する、提出する",
+    partOfSpeech: "動詞",
+    example: "submit a report",
+    exampleMeaning: "報告書を提出する",
+    mastered: false
+  },
+  {
+    id: "a2",
+    word: "tempt",
+    meaning: "〜を誘惑する、〜する気にさせる",
+    partOfSpeech: "動詞",
+    example: "a tempting offer",
+    exampleMeaning: "魅力的な申し出",
+    mastered: false
+  },
+  {
+    id: "a3",
+    word: "resign",
+    meaning: "辞職する、やめる",
+    partOfSpeech: "動詞",
+    example: "The president will resign soon.",
+    exampleMeaning: "社長はまもなく辞任する",
+    mastered: false
+  },
+  {
+    id: "a4",
+    word: "conform",
+    meaning: "従う、合わせる",
+    partOfSpeech: "動詞",
+    example: "conform to the rules",
+    exampleMeaning: "ルールに従う",
+    mastered: false
+  },
+  {
+    id: "a5",
+    word: "confine",
+    meaning: "〜を限定する、閉じ込める、縛りつける",
+    partOfSpeech: "動詞",
+    example: "be confined to a small room",
+    exampleMeaning: "小さな部屋に閉じ込められる",
+    mastered: false
+  },
+  {
+    id: "a6",
+    word: "assemble",
+    meaning: "〜を組み立てる、〜を集める、集まる",
+    partOfSpeech: "動詞",
+    example: "",
+    exampleMeaning: "",
+    mastered: false
+  },
+  {
+    id: "a7",
+    word: "dedicate",
+    meaning: "AをBにささげる、費やす",
+    partOfSpeech: "動詞",
+    example: "",
+    exampleMeaning: "",
+    mastered: false
+  },
+  {
+    id: "a8",
+    word: "advocate",
+    meaning: "主張する、唱える、支持する",
+    partOfSpeech: "動詞",
+    example: "an advocate of human rights",
+    exampleMeaning: "人権の擁護者",
+    mastered: false
+  },
+  {
+    id: "a9",
+    word: "thrive",
+    meaning: "繁栄する、よく成長する",
+    partOfSpeech: "動詞",
+    example: "",
+    exampleMeaning: "",
+    mastered: false
+  },
+  {
+    id: "a10",
+    word: "provoke",
+    meaning: "引き起こす、〜を怒らせる",
+    partOfSpeech: "動詞",
+    example: "provoke a reaction",
+    exampleMeaning: "反応を引き起こす",
+    mastered: false
+  }
+          
         ]
       }
     ];
