@@ -79,7 +79,7 @@
         color: "indigo",
         createdAt: Date.now() - 1000000,
         cards: [       
-          
+
 { id: "a1", word: "submit", meaning: "Aに服従する、提出する", partOfSpeech: "動詞", example: "submit a report", exampleMeaning: "報告書を提出する", mastered: false },
 { id: "a2", word: "tempt", meaning: "〜を誘惑する、〜する気にさせる", partOfSpeech: "動詞", example: "a tempting offer", exampleMeaning: "魅力的な申し出", mastered: false },
 { id: "a3", word: "resign", meaning: "辞職する、やめる", partOfSpeech: "動詞", example: "The president will resign soon.", exampleMeaning: "社長はまもなく辞任する", mastered: false },
@@ -578,6 +578,8 @@
 { id: "a499", word: "via", meaning: "～経由で", partOfSpeech: "前置詞", example: "pay bills via the Internet", exampleMeaning: "インターネット経由で代金を払う", mastered: false },
 { id: "a500", word: "owing", meaning: "～のために", partOfSpeech: "前置詞", example: "owing to lack of fuel", exampleMeaning: "燃料不足のために", mastered: false },
 
+
+
           
         ]
       }
@@ -591,6 +593,13 @@
       rose: { bg: 'bg-rose-500', lightBg: 'bg-rose-50', text: 'text-rose-600', border: 'border-rose-200', ring: 'ring-rose-500' },
       sky: { bg: 'bg-sky-500', lightBg: 'bg-sky-50', text: 'text-sky-600', border: 'border-sky-200', ring: 'ring-sky-500' },
       purple: { bg: 'bg-purple-500', lightBg: 'bg-purple-50', text: 'text-purple-600', border: 'border-purple-200', ring: 'ring-purple-500' }
+    };
+
+    // FILTER MODES CONFIG
+    const FILTER_MODES = {
+      unmastered: { name: "習得モード", desc: "未習得の単語のみ出題", badge: "bg-amber-100 text-amber-800 border-amber-200" },
+      mastered: { name: "復習モード", desc: "習得済みの単語のみ出題", badge: "bg-emerald-100 text-emerald-800 border-emerald-200" },
+      all: { name: "テストモード", desc: "習得・未習得に関係なく全出題", badge: "bg-indigo-100 text-indigo-800 border-indigo-200" }
     };
 
     // --- SVG ICONS COMPONENTS ---
@@ -631,12 +640,14 @@
       const [currentView, setCurrentView] = useState('deck-list');
       const [activeDeckId, setActiveDeckId] = useState(null);
       
-      // Study mode: 'word-to-meaning' (単語→意味) or 'meaning-to-word' (意味→単語)
-      const [studyMode, setStudyMode] = useState('word-to-meaning');
+      // Study configurations
+      const [studyFilter, setStudyFilter] = useState('unmastered'); // 'unmastered', 'mastered', 'all'
+      const [studyMode, setStudyMode] = useState('word-to-meaning'); // 'word-to-meaning', 'meaning-to-word'
 
       // Modals
       const [deckModalOpen, setDeckModalOpen] = useState(false);
       const [editingDeck, setEditingDeck] = useState(null);
+      const [studySetupModalDeck, setStudySetupModalDeck] = useState(null);
 
       // Save to localStorage automatically on state change
       useEffect(() => {
@@ -683,6 +694,16 @@
           }
           return d;
         }));
+      };
+
+      const handleStartStudyWithConfig = (filter, mode) => {
+        setStudyFilter(filter);
+        setStudyMode(mode);
+        if (studySetupModalDeck) {
+          setActiveDeckId(studySetupModalDeck.id);
+          setStudySetupModalDeck(null);
+        }
+        setCurrentView('study');
       };
 
       // Export Data as JSON
@@ -734,7 +755,6 @@
                 className="flex items-center space-x-2 cursor-pointer select-none"
                 onClick={() => { setCurrentView('deck-list'); setActiveDeckId(null); }}
               >
-                {/* icon.png 画像アイコン */}
                 <img src="icon.png" alt="VocabMaster Logo" className="w-10 h-10 rounded-xl object-cover shadow-md" />
                 <div>
                   <h1 className="font-bold text-lg leading-none text-slate-800">VocabMaster</h1>
@@ -766,10 +786,10 @@
             {currentView === 'deck-list' && (
               <DeckListView 
                 decks={decks} 
-                onSelectDeck={(deckId, view, mode = 'word-to-meaning') => {
+                onOpenStudySetup={(deck) => setStudySetupModalDeck(deck)}
+                onSelectManageDeck={(deckId) => {
                   setActiveDeckId(deckId);
-                  setStudyMode(mode);
-                  setCurrentView(view);
+                  setCurrentView('card-manage');
                 }}
                 onNewDeck={() => { setEditingDeck(null); setDeckModalOpen(true); }}
                 onEditDeck={(deck) => { setEditingDeck(deck); setDeckModalOpen(true); }}
@@ -783,16 +803,14 @@
                 deck={activeDeck} 
                 onBack={() => setCurrentView('deck-list')}
                 onUpdateCards={handleUpdateCards}
-                onStartStudy={(mode) => {
-                  setStudyMode(mode);
-                  setCurrentView('study');
-                }}
+                onOpenStudySetup={() => setStudySetupModalDeck(activeDeck)}
               />
             )}
 
             {currentView === 'study' && activeDeck && (
               <StudyView 
                 deck={activeDeck} 
+                studyFilter={studyFilter}
                 studyMode={studyMode}
                 onBack={() => setCurrentView('deck-list')}
                 onUpdateCards={handleUpdateCards}
@@ -809,6 +827,15 @@
             />
           )}
 
+          {/* Modal: Study Mode Setup */}
+          {studySetupModalDeck && (
+            <StudySetupModal 
+              deck={studySetupModalDeck}
+              onClose={() => setStudySetupModalDeck(null)}
+              onStart={handleStartStudyWithConfig}
+            />
+          )}
+
           {/* Footer */}
           <footer className="bg-white border-t border-slate-200 py-4 mt-auto">
             <div className="max-w-6xl mx-auto px-4 text-center text-xs text-slate-400">
@@ -820,7 +847,7 @@
     }
 
     // --- DECK LIST VIEW ---
-    function DeckListView({ decks, onSelectDeck, onNewDeck, onEditDeck, onDeleteDeck, onResetData }) {
+    function DeckListView({ decks, onOpenStudySetup, onSelectManageDeck, onNewDeck, onEditDeck, onDeleteDeck, onResetData }) {
       return (
         <div className="space-y-6">
           {/* Top Banner */}
@@ -903,39 +930,24 @@
                       </div>
                     </div>
 
-                    {/* Mode Selection Action Buttons */}
-                    <div className="space-y-2 pt-2 border-t border-slate-100">
-                      <div className="text-[11px] font-bold text-slate-400 tracking-wider text-center">学習モードを選択</div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <button
-                          onClick={() => onSelectDeck(deck.id, 'study', 'word-to-meaning')}
-                          disabled={total === 0}
-                          className={`py-2 px-2 text-xs font-semibold text-white rounded-xl transition flex items-center justify-center space-x-1 ${
-                            total === 0 ? 'bg-slate-300 cursor-not-allowed' : `${colorTheme.bg} hover:opacity-95 shadow-sm`
-                          }`}
-                          title="英単語を見て日本語の意味を答える"
-                        >
-                          <IconPlay />
-                          <span>単語 → 意味</span>
-                        </button>
-                        <button
-                          onClick={() => onSelectDeck(deck.id, 'study', 'meaning-to-word')}
-                          disabled={total === 0}
-                          className={`py-2 px-2 text-xs font-semibold text-white rounded-xl transition flex items-center justify-center space-x-1 ${
-                            total === 0 ? 'bg-slate-300 cursor-not-allowed' : 'bg-slate-800 hover:bg-slate-700 shadow-sm'
-                          }`}
-                          title="日本語の意味を見て英単語を答える"
-                        >
-                          <IconPlay />
-                          <span>意味 → 単語</span>
-                        </button>
-                      </div>
+                    {/* Action Buttons */}
+                    <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
                       <button
-                        onClick={() => onSelectDeck(deck.id, 'card-manage')}
-                        className="w-full py-1.5 px-3 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition flex items-center justify-center space-x-1"
+                        onClick={() => onSelectManageDeck(deck.id)}
+                        className="py-2.5 px-3 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition flex items-center justify-center space-x-1"
                       >
                         <IconLayers />
-                        <span>単語の編集・管理</span>
+                        <span>単語管理</span>
+                      </button>
+                      <button
+                        onClick={() => onOpenStudySetup(deck)}
+                        disabled={total === 0}
+                        className={`py-2.5 px-3 text-xs font-semibold text-white rounded-xl transition flex items-center justify-center space-x-1 ${
+                          total === 0 ? 'bg-slate-300 cursor-not-allowed' : `${colorTheme.bg} hover:opacity-95 shadow-sm`
+                        }`}
+                      >
+                        <IconPlay />
+                        <span>学習開始</span>
                       </button>
                     </div>
                   </div>
@@ -958,7 +970,7 @@
     }
 
     // --- CARD MANAGE VIEW ---
-    function CardManageView({ deck, onBack, onUpdateCards, onStartStudy }) {
+    function CardManageView({ deck, onBack, onUpdateCards, onOpenStudySetup }) {
       const [searchTerm, setSearchTerm] = useState('');
       const [filterStatus, setFilterStatus] = useState('all'); // all, mastered, unmastered
       const [cardModalOpen, setCardModalOpen] = useState(false);
@@ -1050,24 +1062,14 @@
                 <span>単語を追加</span>
               </button>
               <button
-                onClick={() => onStartStudy('word-to-meaning')}
+                onClick={onOpenStudySetup}
                 disabled={deck.cards.length === 0}
-                className={`px-3 py-2 text-xs font-semibold text-white rounded-xl shadow transition flex items-center space-x-1 ${
+                className={`px-4 py-2 text-xs font-semibold text-white rounded-xl shadow transition flex items-center space-x-1 ${
                   deck.cards.length === 0 ? 'bg-slate-300 cursor-not-allowed' : `${colorTheme.bg} hover:opacity-90`
                 }`}
               >
                 <IconPlay />
-                <span>単語→意味</span>
-              </button>
-              <button
-                onClick={() => onStartStudy('meaning-to-word')}
-                disabled={deck.cards.length === 0}
-                className={`px-3 py-2 text-xs font-semibold text-white rounded-xl shadow transition flex items-center space-x-1 ${
-                  deck.cards.length === 0 ? 'bg-slate-300 cursor-not-allowed' : 'bg-slate-800 hover:bg-slate-700'
-                }`}
-              >
-                <IconPlay />
-                <span>意味→単語</span>
+                <span>学習モード選択</span>
               </button>
             </div>
           </div>
@@ -1107,7 +1109,7 @@
                   filterStatus === 'unmastered' ? 'bg-amber-500 text-white' : 'text-slate-600 hover:bg-slate-100'
                 }`}
               >
-                要学習 ({deck.cards.filter(c => !c.mastered).length})
+                未習得 ({deck.cards.filter(c => !c.mastered).length})
               </button>
               <button
                 onClick={() => setFilterStatus('mastered')}
@@ -1227,8 +1229,14 @@
     }
 
     // --- FLASHCARD STUDY VIEW ---
-    function StudyView({ deck, studyMode = 'word-to-meaning', onBack, onUpdateCards }) {
-      const [cards, setCards] = useState(() => [...deck.cards]);
+    function StudyView({ deck, studyFilter = 'unmastered', studyMode = 'word-to-meaning', onBack, onUpdateCards }) {
+      // 選択した出題範囲（習得モード/復習モード/テストモード）で出題カードを抽出
+      const [cards, setCards] = useState(() => {
+        if (studyFilter === 'unmastered') return deck.cards.filter(c => !c.mastered);
+        if (studyFilter === 'mastered') return deck.cards.filter(c => c.mastered);
+        return [...deck.cards];
+      });
+
       const [currentIndex, setCurrentIndex] = useState(0);
       const [isFlipped, setIsFlipped] = useState(false);
       const [autoSpeech, setAutoSpeech] = useState(true);
@@ -1238,8 +1246,9 @@
 
       const currentCard = cards[currentIndex];
       const colorTheme = COLOR_MAP[deck.color] || COLOR_MAP.indigo;
+      const currentFilterInfo = FILTER_MODES[studyFilter] || FILTER_MODES.all;
 
-      // カード切り替え時に表面へリセット
+      // 次のカードへ進む際、表面（isFlipped = false）へ戻す
       useEffect(() => {
         setIsFlipped(false);
       }, [currentIndex]);
@@ -1247,7 +1256,7 @@
       // Keyboard Shortcuts
       useEffect(() => {
         const handleKeyDown = (e) => {
-          if (sessionCompleted) return;
+          if (sessionCompleted || !currentCard) return;
           if (e.code === 'Space') {
             e.preventDefault();
             setIsFlipped(prev => !prev);
@@ -1256,7 +1265,7 @@
           } else if (e.code === 'ArrowLeft' || e.code === 'Digit1') {
             handleAnswer(false);
           } else if (e.code === 'ArrowUp' || e.code === 'KeyS') {
-            if (currentCard) speakText(currentCard.word);
+            speakText(currentCard.word);
           }
         };
         window.addEventListener('keydown', handleKeyDown);
@@ -1276,13 +1285,13 @@
 
       // Auto Flip Timer Logic
       useEffect(() => {
-        if (autoFlipTimer > 0 && !isFlipped && !sessionCompleted) {
+        if (autoFlipTimer > 0 && !isFlipped && !sessionCompleted && currentCard) {
           const timer = setTimeout(() => {
             setIsFlipped(true);
           }, autoFlipTimer * 1000);
           return () => clearTimeout(timer);
         }
-      }, [currentIndex, isFlipped, autoFlipTimer, sessionCompleted]);
+      }, [currentIndex, isFlipped, autoFlipTimer, sessionCompleted, currentCard]);
 
       // Handle Mastered / Review
       const handleAnswer = (isMastered) => {
@@ -1317,16 +1326,15 @@
         setIsFlipped(false);
       };
 
-      // Restart Session (Only Unmastered or All)
-      const handleRestart = (onlyUnmastered = false) => {
-        let nextCards = [...deck.cards];
-        if (onlyUnmastered) {
-          nextCards = nextCards.filter(c => !c.mastered);
-          if (nextCards.length === 0) {
-            alert('要学習のカードがありません！全カードで学習を開始します。');
-            nextCards = [...deck.cards];
-          }
-        }
+      // Restart Session
+      const handleRestart = () => {
+        let nextCards = [];
+        if (studyFilter === 'unmastered') nextCards = deck.cards.filter(c => !c.mastered);
+        else if (studyFilter === 'mastered') nextCards = deck.cards.filter(c => c.mastered);
+        else nextCards = [...deck.cards];
+
+        if (nextCards.length === 0) nextCards = [...deck.cards];
+
         setCards(nextCards);
         setCurrentIndex(0);
         setIsFlipped(false);
@@ -1336,10 +1344,14 @@
 
       if (!currentCard && !sessionCompleted) {
         return (
-          <div className="bg-white rounded-2xl p-12 text-center">
-            <p className="text-slate-500">学習できる単語カードがありません。</p>
-            <button onClick={onBack} className="mt-4 px-4 py-2 bg-slate-800 text-white text-xs rounded-xl font-semibold">
-              デッキ一覧に戻る
+          <div className="bg-white rounded-3xl p-12 text-center max-w-lg mx-auto shadow-sm border border-slate-200 my-8 space-y-4">
+            <div className="text-4xl">📭</div>
+            <h3 className="text-xl font-bold text-slate-800">出題対象の単語がありません</h3>
+            <p className="text-slate-500 text-sm">
+              選択された「{currentFilterInfo.name}」に該当する単語が存在しないか、全て学習完了しています。
+            </p>
+            <button onClick={onBack} className="mt-2 px-5 py-2.5 bg-brand-600 text-white text-xs rounded-xl font-semibold hover:bg-brand-500 transition">
+              デッキ一覧へ戻る
             </button>
           </div>
         );
@@ -1357,12 +1369,17 @@
               <span>終了</span>
             </button>
 
-            {/* Mode Badge & Progress Counter */}
+            {/* Mode Badges & Progress Counter */}
             {!sessionCompleted && (
               <div className="text-center">
-                <span className="text-[10px] font-extrabold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-full mb-1 inline-block">
-                  {studyMode === 'word-to-meaning' ? '単語 → 意味' : '意味 → 単語'}
-                </span>
+                <div className="flex items-center justify-center space-x-1 mb-1">
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${currentFilterInfo.badge}`}>
+                    {currentFilterInfo.name}
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full">
+                    {studyMode === 'word-to-meaning' ? '単語 → 意味' : '意味 → 単語'}
+                  </span>
+                </div>
                 <div className="text-base font-extrabold text-slate-800 leading-none">
                   {currentIndex + 1} <span className="text-slate-400 font-normal">/ {cards.length}</span>
                 </div>
@@ -1422,7 +1439,7 @@
                   {/* FRONT SIDE */}
                   <div className="absolute inset-0 w-full h-full bg-white border-2 border-slate-200 rounded-3xl p-8 flex flex-col justify-between items-center text-center shadow-lg backface-hidden">
                     <div className="w-full flex justify-between items-center text-xs text-slate-400 font-semibold">
-                      <span>{deck.title} ({studyMode === 'word-to-meaning' ? '単語' : '意味'})</span>
+                      <span>{deck.title} ({currentFilterInfo.name})</span>
                       <span className="flex items-center space-x-1">
                         <IconRotate /> <span>クリックまたは Space で裏返す</span>
                       </span>
@@ -1430,6 +1447,7 @@
 
                     <div className="my-auto space-y-3 max-w-lg w-full">
                       {studyMode === 'word-to-meaning' ? (
+                        /* 【単語→意味】モードの表面：英単語 ＋ 英語例文（英語セット） */
                         <>
                           {currentCard.partOfSpeech && (
                             <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600">
@@ -1441,13 +1459,20 @@
                           </h3>
                           <button 
                             onClick={(e) => { e.stopPropagation(); speakText(currentCard.word); }}
-                            className="p-3 bg-brand-50 hover:bg-brand-100 text-brand-600 rounded-full transition inline-flex items-center justify-center mt-2"
+                            className="p-2.5 bg-brand-50 hover:bg-brand-100 text-brand-600 rounded-full transition inline-flex items-center justify-center my-1"
                             title="発音を聞く [Key S]"
                           >
                             <IconVolume />
                           </button>
+
+                          {currentCard.example && (
+                            <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200/80 text-center space-y-1">
+                              <p className="text-xs sm:text-sm font-medium text-slate-700 italic">"{currentCard.example}"</p>
+                            </div>
+                          )}
                         </>
                       ) : (
+                        /* 【意味→単語】モードの表面：単語の意味 ＋ 例文の訳（日本語セット） */
                         <>
                           {currentCard.partOfSpeech && (
                             <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600">
@@ -1457,19 +1482,25 @@
                           <h3 className="text-2xl sm:text-4xl font-extrabold text-slate-800 tracking-tight">
                             {currentCard.meaning}
                           </h3>
+
+                          {currentCard.exampleMeaning && (
+                            <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200/80 text-center mt-2">
+                              <p className="text-xs sm:text-sm font-medium text-slate-600">「{currentCard.exampleMeaning}」</p>
+                            </div>
+                          )}
                         </>
                       )}
                     </div>
 
                     <div className="text-xs text-slate-400 font-medium">
-                      {studyMode === 'word-to-meaning' ? '裏面に日本語の訳が表示されます' : '裏面に英単語と例文が表示されます'}
+                      {studyMode === 'word-to-meaning' ? '裏面に意味と例文訳が表示されます' : '裏面に英単語と例文が表示されます'}
                     </div>
                   </div>
 
                   {/* BACK SIDE */}
                   <div className="absolute inset-0 w-full h-full bg-slate-900 text-white rounded-3xl p-8 flex flex-col justify-between items-center text-center shadow-xl backface-hidden rotate-y-180">
                     <div className="w-full flex justify-between items-center text-xs text-slate-400">
-                      <span>{studyMode === 'word-to-meaning' ? '意味 & 例文' : '英単語 & 例文'}</span>
+                      <span>{studyMode === 'word-to-meaning' ? '意味 & 例文訳' : '英単語 & 例文'}</span>
                       <span className="flex items-center space-x-1">
                         <IconRotate /> <span>表面に戻る</span>
                       </span>
@@ -1477,29 +1508,20 @@
 
                     <div className="my-auto space-y-4 max-w-lg w-full">
                       {studyMode === 'word-to-meaning' ? (
+                        /* 【単語→意味】モードの裏面：単語の意味 ＋ 例文の訳（日本語セット） */
                         <>
                           <div className="text-2xl sm:text-3xl font-bold text-emerald-400">
                             {currentCard.meaning}
                           </div>
 
-                          {currentCard.example && (
-                            <div className="bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80 text-left space-y-1.5 mt-2">
-                              <div className="flex items-start justify-between">
-                                <p className="text-sm font-medium text-slate-200 italic">"{currentCard.example}"</p>
-                                <button 
-                                  onClick={(e) => { e.stopPropagation(); speakText(currentCard.example); }}
-                                  className="p-1 text-slate-400 hover:text-white shrink-0 ml-2"
-                                >
-                                  <IconVolume />
-                                </button>
-                              </div>
-                              {currentCard.exampleMeaning && (
-                                <p className="text-xs text-slate-400">{currentCard.exampleMeaning}</p>
-                              )}
+                          {currentCard.exampleMeaning && (
+                            <div className="bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700/80 text-center mt-2">
+                              <p className="text-xs sm:text-sm font-medium text-slate-200">「{currentCard.exampleMeaning}」</p>
                             </div>
                           )}
                         </>
                       ) : (
+                        /* 【意味→単語】モードの裏面：英単語 ＋ 英語例文（英語セット） */
                         <>
                           <div className="flex items-center justify-center space-x-3">
                             <h3 className="text-3xl sm:text-4xl font-extrabold text-emerald-400 tracking-tight">
@@ -1515,19 +1537,16 @@
                           </div>
 
                           {currentCard.example && (
-                            <div className="bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80 text-left space-y-1.5 mt-2">
-                              <div className="flex items-start justify-between">
-                                <p className="text-sm font-medium text-slate-200 italic">"{currentCard.example}"</p>
+                            <div className="bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700/80 text-center space-y-1.5 mt-2">
+                              <div className="flex items-center justify-between">
+                                <p className="text-xs sm:text-sm font-medium text-slate-200 italic w-full text-center">"{currentCard.example}"</p>
                                 <button 
                                   onClick={(e) => { e.stopPropagation(); speakText(currentCard.example); }}
-                                  className="p-1 text-slate-400 hover:text-white shrink-0 ml-2"
+                                  className="p-1 text-slate-400 hover:text-white shrink-0 ml-1"
                                 >
                                   <IconVolume />
                                 </button>
                               </div>
-                              {currentCard.exampleMeaning && (
-                                <p className="text-xs text-slate-400">{currentCard.exampleMeaning}</p>
-                              )}
                             </div>
                           )}
                         </>
@@ -1570,7 +1589,7 @@
 
               <div>
                 <h3 className="text-2xl font-extrabold text-slate-800">学習セッション完了！</h3>
-                <p className="text-slate-500 text-sm mt-1">すべてのカードのチェックが完了しました。</p>
+                <p className="text-slate-500 text-sm mt-1">「{currentFilterInfo.name}」のチェックが完了しました。</p>
               </div>
 
               {/* Stats Box */}
@@ -1588,16 +1607,10 @@
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
                 <button
-                  onClick={() => handleRestart(true)}
+                  onClick={handleRestart}
                   className="px-5 py-3 bg-slate-800 hover:bg-slate-700 text-white font-semibold text-sm rounded-xl transition"
                 >
-                  要学習カードのみ再テスト
-                </button>
-                <button
-                  onClick={() => handleRestart(false)}
-                  className="px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm rounded-xl transition"
-                >
-                  全カードをもう一度学習
+                  もう一度学習する
                 </button>
                 <button
                   onClick={onBack}
@@ -1608,6 +1621,147 @@
               </div>
             </div>
           )}
+        </div>
+      );
+    }
+
+    // --- MODAL: STUDY MODE SETUP ---
+    function StudySetupModal({ deck, onClose, onStart }) {
+      const [filter, setFilter] = useState('unmastered');
+      const [mode, setMode] = useState('word-to-meaning');
+
+      const unmasteredCount = useMemo(() => deck.cards.filter(c => !c.mastered).length, [deck.cards]);
+      const masteredCount = useMemo(() => deck.cards.filter(c => c.mastered).length, [deck.cards]);
+      const totalCount = deck.cards.length;
+
+      return (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-6">
+            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+              <div>
+                <h3 className="font-bold text-lg text-slate-800">学習設定</h3>
+                <p className="text-xs text-slate-500">{deck.title}</p>
+              </div>
+              <button onClick={onClose} className="p-1 text-slate-400 hover:text-slate-600"><IconX /></button>
+            </div>
+
+            {/* 出題範囲の選択（習得・復習・テスト） */}
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-slate-700">1. 出題モードを選択</label>
+              <div className="grid grid-cols-1 gap-2">
+                {/* 習得モード */}
+                <button
+                  type="button"
+                  onClick={() => setFilter('unmastered')}
+                  className={`p-3 rounded-2xl border text-left flex items-center justify-between transition ${
+                    filter === 'unmastered' 
+                      ? 'border-amber-500 bg-amber-50/50 ring-2 ring-amber-500' 
+                      : 'border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  <div>
+                    <div className="font-bold text-sm text-slate-800 flex items-center">
+                      <span>🎯 習得モード</span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-0.5">未習得の単語のみ出題</p>
+                  </div>
+                  <span className="px-2.5 py-1 text-xs font-bold rounded-lg bg-amber-100 text-amber-800">
+                    {unmasteredCount} 件
+                  </span>
+                </button>
+
+                {/* 復習モード */}
+                <button
+                  type="button"
+                  onClick={() => setFilter('mastered')}
+                  className={`p-3 rounded-2xl border text-left flex items-center justify-between transition ${
+                    filter === 'mastered' 
+                      ? 'border-emerald-500 bg-emerald-50/50 ring-2 ring-emerald-500' 
+                      : 'border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  <div>
+                    <div className="font-bold text-sm text-slate-800 flex items-center">
+                      <span>🔄 復習モード</span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-0.5">習得済みの単語のみ出題</p>
+                  </div>
+                  <span className="px-2.5 py-1 text-xs font-bold rounded-lg bg-emerald-100 text-emerald-800">
+                    {masteredCount} 件
+                  </span>
+                </button>
+
+                {/* テストモード */}
+                <button
+                  type="button"
+                  onClick={() => setFilter('all')}
+                  className={`p-3 rounded-2xl border text-left flex items-center justify-between transition ${
+                    filter === 'all' 
+                      ? 'border-indigo-500 bg-indigo-50/50 ring-2 ring-indigo-500' 
+                      : 'border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  <div>
+                    <div className="font-bold text-sm text-slate-800 flex items-center">
+                      <span>📝 テストモード</span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-0.5">習得・未習得関係なく全出題</p>
+                  </div>
+                  <span className="px-2.5 py-1 text-xs font-bold rounded-lg bg-indigo-100 text-indigo-800">
+                    {totalCount} 件
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            {/* 出題形式の選択（単語→意味・意味→単語） */}
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-slate-700">2. 出題形式を選択</label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setMode('word-to-meaning')}
+                  className={`p-3 rounded-xl border text-center transition ${
+                    mode === 'word-to-meaning'
+                      ? 'border-brand-600 bg-brand-50 text-brand-700 font-bold ring-2 ring-brand-500'
+                      : 'border-slate-200 text-slate-600 hover:bg-slate-50 font-medium'
+                  }`}
+                >
+                  <span className="text-xs block">単語 → 意味</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMode('meaning-to-word')}
+                  className={`p-3 rounded-xl border text-center transition ${
+                    mode === 'meaning-to-word'
+                      ? 'border-brand-600 bg-brand-50 text-brand-700 font-bold ring-2 ring-brand-500'
+                      : 'border-slate-200 text-slate-600 hover:bg-slate-50 font-medium'
+                  }`}
+                >
+                  <span className="text-xs block">意味 → 単語</span>
+                </button>
+              </div>
+            </div>
+
+            {/* スタートボタン */}
+            <div className="pt-2 border-t border-slate-100 flex justify-end space-x-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2.5 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl"
+              >
+                キャンセル
+              </button>
+              <button
+                type="button"
+                onClick={() => onStart(filter, mode)}
+                className="px-6 py-2.5 text-xs font-semibold text-white bg-brand-600 hover:bg-brand-500 rounded-xl shadow-md transition flex items-center space-x-1"
+              >
+                <IconPlay />
+                <span>学習スタート</span>
+              </button>
+            </div>
+          </div>
         </div>
       );
     }
