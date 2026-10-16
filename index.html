@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VocabMaster - 英単語フラッシュカード</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- React & ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <!-- Babel for JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- Tailwind Configuration -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* 3D Card Flip Animation CSS */
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+    .transform-style-3d {
+      transform-style: preserve-3d;
+    }
+    .backface-hidden {
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+    .rotate-y-180 {
+      transform: rotateY(180deg);
+    }
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans antialiased min-h-screen">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useMemo } = React;
+
+    // --- SAMPLE DEFAULT DECKS ---
+    const DEFAULT_DECKS = [
+      {
+        id: "deck_daily",
+        title: "日常英会話ハイクラス",
+        description: "ネイティブが会話でよく使う、ニュアンスのある必須英単語",
+        color: "indigo",
+        createdAt: Date.now() - 1000000,
+        cards: [
+          { id: "c1", word: "subtle", meaning: "かすかな、微妙な、繊細な", partOfSpeech: "形容詞", example: "There is a subtle difference between the two options.", exampleMeaning: "その2つの選択肢には微妙な違いがある。", mastered: false },
+          { id: "c2", word: "reluctant", meaning: "気が進まない、乗り気でない", partOfSpeech: "形容詞", example: "She was reluctant to leave the party early.", exampleMeaning: "彼女はパーティーを早く抜けるのに気が進まなかった。", mastered: true },
+          { id: "c3", word: "ambiguous", meaning: "曖昧な、多義的な", partOfSpeech: "形容詞", example: "His answer was ambiguous and left us confused.", exampleMeaning: "彼の返答は曖昧で私たちは混乱した。", mastered: false },
+          { id: "c4", word: "articulate", meaning: "明瞭に話す、考えを滑舌良く伝える", partOfSpeech: "動詞 / 形容詞", example: "He is very articulate when presenting his ideas.", exampleMeaning: "彼は自分の考えを発表するとき非常にわかりやすく話す。", mastered: false },
+          { id: "c5", word: "pragmatic", meaning: "実践的な、現実的な", partOfSpeech: "形容詞", example: "We need a pragmatic solution to this ongoing issue.", exampleMeaning: "この進行中の問題には現実的な解決策が必要だ。", mastered: true },
+          { id: "c6", word: "scrutinize", meaning: "詳細に調べる、監視する", partOfSpeech: "動詞", example: "The auditors will scrutinize the financial records.", exampleMeaning: "監査人は財務記録を細かく精査する予定だ。", mastered: false }
+        ]
+      },
+      {
+        id: "deck_biz",
+        title: "ビジネス英語重要単語",
+        description: "会議、メール、交渉で頻出する実用ビジネス語彙",
+        color: "emerald",
+        createdAt: Date.now() - 500000,
+        cards: [
+          { id: "b1", word: "leverage", meaning: "活用する、てこ入れする", partOfSpeech: "動詞 / 名詞", example: "We should leverage our market research to boost sales.", exampleMeaning: "売上を伸ばすために市場調査を活用すべきだ。", mastered: false },
+          { id: "b2", word: "bottleneck", meaning: "ボトルネック、進行の障害", partOfSpeech: "名詞", example: "Supply delays are creating a major bottleneck.", exampleMeaning: "供給の遅れが大きなボトルネックを生んでいる。", mastered: false },
+          { id: "b3", word: "implement", meaning: "実行する、導入する", partOfSpeech: "動詞", example: "We plan to implement the new system next month.", exampleMeaning: "来月新しいシステムを導入する予定です。", mastered: true },
+          { id: "b4", word: "benchmark", meaning: "基準、比較指標", partOfSpeech: "名詞", example: "Our performance set a new benchmark for the industry.", exampleMeaning: "当社の業績は業界の新しい基準となった。", mastered: false },
+          { id: "b5", word: "feasibility", meaning: "実現可能性", partOfSpeech: "名詞", example: "They are conducting a feasibility study on the project.", exampleMeaning: "彼らはそのプロジェクトの実現可能性調査を行っている。", mastered: false }
+        ]
+      },
+      {
+        id: "deck_toeic",
+        title: "TOEIC頻出単語",
+        description: "スコアアップに直結する必須語句セット",
+        color: "amber",
+        createdAt: Date.now(),
+        cards: [
+          { id: "t1", word: "accommodate", meaning: "収容する、要望に応える", partOfSpeech: "動詞", example: "The hall can accommodate up to 500 guests.", exampleMeaning: "そのホールは500名までのゲストを収容できる。", mastered: false },
+          { id: "t2", word: "itinerary", meaning: "旅行日程、行程表", partOfSpeech: "名詞", example: "Please check your flight itinerary carefully.", exampleMeaning: "フライトの行程表をよく確認してください。", mastered: false },
+          { id: "t3", word: "designated", meaning: "指定された、指名された", partOfSpeech: "形容詞", example: "Please smoke only in designated areas.", exampleMeaning: "指定された場所でのみ喫煙してください。", mastered: true }
+        ]
+      }
+    ];
+
+    // COLOR MAP FOR CARDS
+    const COLOR_MAP = {
+      indigo: { bg: 'bg-indigo-500', lightBg: 'bg-indigo-50', text: 'text-indigo-600', border: 'border-indigo-200', ring: 'ring-indigo-500' },
+      emerald: { bg: 'bg-emerald-500', lightBg: 'bg-emerald-50', text: 'text-emerald-600', border: 'border-emerald-200', ring: 'ring-emerald-500' },
+      amber: { bg: 'bg-amber-500', lightBg: 'bg-amber-50', text: 'text-amber-600', border: 'border-amber-200', ring: 'ring-amber-500' },
+      rose: { bg: 'bg-rose-500', lightBg: 'bg-rose-50', text: 'text-rose-600', border: 'border-rose-200', ring: 'ring-rose-500' },
+      sky: { bg: 'bg-sky-500', lightBg: 'bg-sky-50', text: 'text-sky-600', border: 'border-sky-200', ring: 'ring-sky-500' },
+      purple: { bg: 'bg-purple-500', lightBg: 'bg-purple-50', text: 'text-purple-600', border: 'border-purple-200', ring: 'ring-purple-500' }
+    };
+
+    // --- SVG ICONS COMPONENTS ---
+    const IconPlus = () => <svg className="w-5 h-5 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>;
+    const IconTrash = () => <svg className="w-4 h-4 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>;
+    const IconEdit = () => <svg className="w-4 h-4 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>;
+    const IconVolume = () => <svg className="w-5 h-5 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>;
+    const IconPlay = () => <svg className="w-5 h-5 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
+    const IconCheck = () => <svg className="w-5 h-5 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>;
+    const IconX = () => <svg className="w-5 h-5 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>;
+    const IconRotate = () => <svg className="w-5 h-5 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>;
+    const IconShuffle = () => <svg className="w-4 h-4 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>;
+    const IconDownload = () => <svg className="w-4 h-4 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>;
+    const IconUpload = () => <svg className="w-4 h-4 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>;
+    const IconArrowLeft = () => <svg className="w-5 h-5 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>;
+    const IconBook = () => <svg className="w-6 h-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>;
+    const IconLayers = () => <svg className="w-5 h-5 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>;
+    const IconSparkles = () => <svg className="w-6 h-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>;
+
+    // Utility TTS Speak
+    const speakText = (text, lang = 'en-US') => {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = lang;
+      utterance.rate = 0.9;
+      window.speechSynthesis.speak(utterance);
+    };
+
+    // --- MAIN APP COMPONENT ---
+    function App() {
+      // Load Decks from LocalStorage or fallback
+      const [decks, setDecks] = useState(() => {
+        const saved = localStorage.getItem('VOCAB_FLASHCARDS_DECKS_V1');
+        return saved ? JSON.parse(saved) : DEFAULT_DECKS;
+      });
+
+      // View state: 'deck-list', 'card-manage', 'study'
+      const [currentView, setCurrentView] = useState('deck-list');
+      const [activeDeckId, setActiveDeckId] = useState(null);
+
+      // Modals
+      const [deckModalOpen, setDeckModalOpen] = useState(false);
+      const [editingDeck, setEditingDeck] = useState(null);
+
+      // Save to localStorage automatically on state change
+      useEffect(() => {
+        localStorage.setItem('VOCAB_FLASHCARDS_DECKS_V1', JSON.stringify(decks));
+      }, [decks]);
+
+      // Active Deck Getter
+      const activeDeck = useMemo(() => {
+        return decks.find(d => d.id === activeDeckId) || null;
+      }, [decks, activeDeckId]);
+
+      // Deck Handlers
+      const handleSaveDeck = (deckData) => {
+        if (deckData.id) {
+          setDecks(prev => prev.map(d => d.id === deckData.id ? { ...d, ...deckData } : d));
+        } else {
+          const newDeck = {
+            ...deckData,
+            id: 'deck_' + Date.now(),
+            createdAt: Date.now(),
+            cards: []
+          };
+          setDecks(prev => [newDeck, ...prev]);
+        }
+        setDeckModalOpen(false);
+        setEditingDeck(null);
+      };
+
+      const handleDeleteDeck = (deckId) => {
+        if (confirm('このカードセットを削除してもよろしいですか？（含まれる単語も全て削除されます）')) {
+          setDecks(prev => prev.filter(d => d.id !== deckId));
+          if (activeDeckId === deckId) {
+            setActiveDeckId(null);
+            setCurrentView('deck-list');
+          }
+        }
+      };
+
+      const handleUpdateCards = (updatedCards) => {
+        if (!activeDeckId) return;
+        setDecks(prev => prev.map(d => {
+          if (d.id === activeDeckId) {
+            return { ...d, cards: updatedCards };
+          }
+          return d;
+        }));
+      };
+
+      // Export Data as JSON
+      const handleExportData = () => {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(decks, null, 2));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", `vocab_master_backup_${new Date().toISOString().slice(0,10)}.json`);
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+      };
+
+      // Import Data from JSON
+      const handleImportData = (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const imported = JSON.parse(e.target.result);
+            if (Array.isArray(imported)) {
+              setDecks(imported);
+              alert('データを正常に読み込みました！');
+            } else {
+              alert('無効なデータ形式です。');
+            }
+          } catch (err) {
+            alert('JSONファイルのパースに失敗しました。');
+          }
+        };
+        reader.readAsText(file);
+        event.target.value = '';
+      };
+
+      // Reset Sample Data
+      const handleResetData = () => {
+        if (confirm('全てのデッキをデフォルトの初期状態にリセットしますか？現在の追加データは上書きされます。')) {
+          setDecks(DEFAULT_DECKS);
+        }
+      };
+
+      return (
+        <div className="min-h-screen flex flex-col">
+          {/* Header */}
+          <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+            <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+              <div 
+                className="flex items-center space-x-2 cursor-pointer select-none"
+                onClick={() => { setCurrentView('deck-list'); setActiveDeckId(null); }}
+              >
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-white shadow-md">
+                  <IconBook />
+                </div>
+                <div>
+                  <h1 className="font-bold text-lg leading-none text-slate-800">VocabMaster</h1>
+                  <p className="text-xs text-slate-500 font-medium">英単語フラッシュカード</p>
+                </div>
+              </div>
+
+              {/* Header Right Actions */}
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <button 
+                  onClick={handleExportData}
+                  className="px-3 py-1.5 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors flex items-center space-x-1"
+                  title="データをJSONとして書き出し"
+                >
+                  <IconDownload />
+                  <span className="hidden sm:inline">バックアップ</span>
+                </button>
+                <label className="px-3 py-1.5 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer flex items-center space-x-1">
+                  <IconUpload />
+                  <span className="hidden sm:inline">復元</span>
+                  <input type="file" accept=".json" onChange={handleImportData} className="hidden" />
+                </label>
+              </div>
+            </div>
+          </header>
+
+          {/* Main Content Area */}
+          <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-6">
+            {currentView === 'deck-list' && (
+              <DeckListView 
+                decks={decks} 
+                onSelectDeck={(deckId, view) => {
+                  setActiveDeckId(deckId);
+                  setCurrentView(view);
+                }}
+                onNewDeck={() => { setEditingDeck(null); setDeckModalOpen(true); }}
+                onEditDeck={(deck) => { setEditingDeck(deck); setDeckModalOpen(true); }}
+                onDeleteDeck={handleDeleteDeck}
+                onResetData={handleResetData}
+              />
+            )}
+
+            {currentView === 'card-manage' && activeDeck && (
+              <CardManageView 
+                deck={activeDeck} 
+                onBack={() => setCurrentView('deck-list')}
+                onUpdateCards={handleUpdateCards}
+                onStartStudy={() => setCurrentView('study')}
+              />
+            )}
+
+            {currentView === 'study' && activeDeck && (
+              <StudyView 
+                deck={activeDeck} 
+                onBack={() => setCurrentView('deck-list')}
+                onUpdateCards={handleUpdateCards}
+              />
+            )}
+          </main>
+
+          {/* Modal: Create/Edit Deck */}
+          {deckModalOpen && (
+            <DeckModal 
+              editingDeck={editingDeck} 
+              onClose={() => setDeckModalOpen(false)}
+              onSave={handleSaveDeck}
+            />
+          )}
+
+          {/* Footer */}
+          <footer className="bg-white border-t border-slate-200 py-4 mt-auto">
+            <div className="max-w-6xl mx-auto px-4 text-center text-xs text-slate-400">
+              VocabMaster &copy; {new Date().getFullYear()} - 自分だけの英単語帳を作成・暗記学習
+            </div>
+          </footer>
+        </div>
+      );
+    }
+
+    // --- DECK LIST VIEW ---
+    function DeckListView({ decks, onSelectDeck, onNewDeck, onEditDeck, onDeleteDeck, onResetData }) {
+      return (
+        <div className="space-y-6">
+          {/* Top Banner */}
+          <div className="bg-gradient-to-r from-slate-800 to-indigo-900 rounded-2xl p-6 text-white shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/30 text-indigo-200 mb-2 border border-indigo-400/30">
+                <IconSparkles /> <span className="ml-1">スマート暗記システム</span>
+              </span>
+              <h2 className="text-2xl font-bold">英単語カードデッキ一覧</h2>
+              <p className="text-slate-300 text-sm mt-1">
+                セットを選択してフラッシュカード学習を開始するか、新しい単語を登録しましょう。
+              </p>
+            </div>
+            <button
+              onClick={onNewDeck}
+              className="px-5 py-3 bg-brand-600 hover:bg-brand-500 font-semibold text-white rounded-xl shadow-lg shadow-brand-600/30 transition flex items-center justify-center space-x-2 shrink-0"
+            >
+              <IconPlus />
+              <span>新しいデッキを作成</span>
+            </button>
+          </div>
+
+          {/* Decks Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {decks.map(deck => {
+              const total = deck.cards.length;
+              const mastered = deck.cards.filter(c => c.mastered).length;
+              const percent = total > 0 ? Math.round((mastered / total) * 100) : 0;
+              const colorTheme = COLOR_MAP[deck.color] || COLOR_MAP.indigo;
+
+              return (
+                <div 
+                  key={deck.id}
+                  className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col overflow-hidden"
+                >
+                  {/* Color Header Bar */}
+                  <div className={`h-2 ${colorTheme.bg}`} />
+                  
+                  <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                    <div>
+                      <div className="flex items-start justify-between">
+                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${colorTheme.lightBg} ${colorTheme.text}`}>
+                          {total} 単語
+                        </span>
+                        <div className="flex items-center space-x-1">
+                          <button 
+                            onClick={() => onEditDeck(deck)}
+                            className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition"
+                            title="編集"
+                          >
+                            <IconEdit />
+                          </button>
+                          <button 
+                            onClick={() => onDeleteDeck(deck.id)}
+                            className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-slate-100 transition"
+                            title="削除"
+                          >
+                            <IconTrash />
+                          </button>
+                        </div>
+                      </div>
+
+                      <h3 className="text-xl font-bold text-slate-800 mt-2 line-clamp-1">{deck.title}</h3>
+                      <p className="text-slate-500 text-xs mt-1 line-clamp-2 min-h-[2rem]">
+                        {deck.description || '説明なし'}
+                      </p>
+                    </div>
+
+                    {/* Progress */}
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-xs text-slate-500 font-medium">
+                        <span>進捗率 (習得済み)</span>
+                        <span className="font-bold text-slate-700">{mastered} / {total} ({percent}%)</span>
+                      </div>
+                      <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                        <div 
+                          className={`h-full ${colorTheme.bg} transition-all duration-500`}
+                          style={{ width: `${percent}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
+                      <button
+                        onClick={() => onSelectDeck(deck.id, 'card-manage')}
+                        className="py-2 px-3 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition flex items-center justify-center space-x-1"
+                      >
+                        <IconLayers />
+                        <span>単語管理</span>
+                      </button>
+                      <button
+                        onClick={() => onSelectDeck(deck.id, 'study')}
+                        disabled={total === 0}
+                        className={`py-2 px-3 text-xs font-semibold text-white rounded-xl transition flex items-center justify-center space-x-1 ${
+                          total === 0 ? 'bg-slate-300 cursor-not-allowed' : `${colorTheme.bg} hover:opacity-95 shadow-sm`
+                        }`}
+                      >
+                        <IconPlay />
+                        <span>学習開始</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Reset button at bottom */}
+          <div className="pt-8 text-center">
+            <button 
+              onClick={onResetData}
+              className="text-xs text-slate-400 hover:text-slate-600 underline"
+            >
+              初期サンプルデッキにリセットする
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    // --- CARD MANAGE VIEW ---
+    function CardManageView({ deck, onBack, onUpdateCards, onStartStudy }) {
+      const [searchTerm, setSearchTerm] = useState('');
+      const [filterStatus, setFilterStatus] = useState('all'); // all, mastered, unmastered
+      const [cardModalOpen, setCardModalOpen] = useState(false);
+      const [bulkModalOpen, setBulkModalOpen] = useState(false);
+      const [editingCard, setEditingCard] = useState(null);
+
+      const colorTheme = COLOR_MAP[deck.color] || COLOR_MAP.indigo;
+
+      // Filter Cards
+      const filteredCards = useMemo(() => {
+        return deck.cards.filter(c => {
+          const matchesSearch = c.word.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                                c.meaning.toLowerCase().includes(searchTerm.toLowerCase());
+          if (filterStatus === 'mastered') return matchesSearch && c.mastered;
+          if (filterStatus === 'unmastered') return matchesSearch && !c.mastered;
+          return matchesSearch;
+        });
+      }, [deck.cards, searchTerm, filterStatus]);
+
+      // Add or Edit Card
+      const handleSaveCard = (cardData) => {
+        if (cardData.id) {
+          const updated = deck.cards.map(c => c.id === cardData.id ? cardData : c);
+          onUpdateCards(updated);
+        } else {
+          const newCard = {
+            ...cardData,
+            id: 'card_' + Date.now(),
+            mastered: false,
+            createdAt: Date.now()
+          };
+          onUpdateCards([...deck.cards, newCard]);
+        }
+        setCardModalOpen(false);
+        setEditingCard(null);
+      };
+
+      // Delete Single Card
+      const handleDeleteCard = (cardId) => {
+        if (confirm('この単語カードを削除しますか？')) {
+          onUpdateCards(deck.cards.filter(c => c.id !== cardId));
+        }
+      };
+
+      // Toggle Mastered Status
+      const handleToggleMastered = (cardId) => {
+        onUpdateCards(deck.cards.map(c => c.id === cardId ? { ...c, mastered: !c.mastered } : c));
+      };
+
+      // Bulk Add Cards
+      const handleBulkAdd = (newCards) => {
+        onUpdateCards([...deck.cards, ...newCards]);
+        setBulkModalOpen(false);
+      };
+
+      return (
+        <div className="space-y-6">
+          {/* Header & Back Navigation */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <div className="flex items-center space-x-3">
+              <button 
+                onClick={onBack}
+                className="p-2 text-slate-500 hover:bg-slate-100 rounded-xl transition"
+              >
+                <IconArrowLeft />
+              </button>
+              <div>
+                <div className="flex items-center space-x-2">
+                  <span className={`w-3 h-3 rounded-full ${colorTheme.bg}`} />
+                  <h2 className="text-xl font-bold text-slate-800">{deck.title}</h2>
+                </div>
+                <p className="text-xs text-slate-500 mt-0.5">登録済み単語: {deck.cards.length} 件</p>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => setBulkModalOpen(true)}
+                className="px-3 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition flex items-center space-x-1"
+              >
+                <IconPlus />
+                <span>クイック一括登録</span>
+              </button>
+              <button
+                onClick={() => { setEditingCard(null); setCardModalOpen(true); }}
+                className="px-3 py-2 text-xs font-semibold text-white bg-brand-600 hover:bg-brand-500 rounded-xl shadow transition flex items-center space-x-1"
+              >
+                <IconPlus />
+                <span>単語を追加</span>
+              </button>
+              <button
+                onClick={onStartStudy}
+                disabled={deck.cards.length === 0}
+                className={`px-4 py-2 text-xs font-semibold text-white rounded-xl shadow transition flex items-center space-x-1 ${
+                  deck.cards.length === 0 ? 'bg-slate-300 cursor-not-allowed' : `${colorTheme.bg} hover:opacity-90`
+                }`}
+              >
+                <IconPlay />
+                <span>学習モードへ</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Search & Filter Bar */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1">
+              <input 
+                type="text"
+                placeholder="英単語または日本語の意味で検索..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-4 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+              />
+              {searchTerm && (
+                <button 
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
+                >
+                  <IconX />
+                </button>
+              )}
+            </div>
+
+            <div className="flex bg-white p-1 border border-slate-200 rounded-xl shrink-0">
+              <button
+                onClick={() => setFilterStatus('all')}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition ${
+                  filterStatus === 'all' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                すべて ({deck.cards.length})
+              </button>
+              <button
+                onClick={() => setFilterStatus('unmastered')}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition ${
+                  filterStatus === 'unmastered' ? 'bg-amber-500 text-white' : 'text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                要学習 ({deck.cards.filter(c => !c.mastered).length})
+              </button>
+              <button
+                onClick={() => setFilterStatus('mastered')}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition ${
+                  filterStatus === 'mastered' ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                習得済み ({deck.cards.filter(c => c.mastered).length})
+              </button>
+            </div>
+          </div>
+
+          {/* Cards List Table */}
+          {filteredCards.length === 0 ? (
+            <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center text-slate-400">
+              <p className="text-base font-medium">該当する単語カードが見つかりません</p>
+              <p className="text-xs mt-1">「単語を追加」または「クイック一括登録」から単語を追加してみましょう。</p>
+            </div>
+          ) : (
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+              <div className="divide-y divide-slate-100">
+                {filteredCards.map((card) => (
+                  <div key={card.id} className="p-4 hover:bg-slate-50/80 transition flex flex-col md:flex-row md:items-center justify-between gap-3">
+                    <div className="flex items-start space-x-3 flex-1">
+                      {/* Mastered Toggle Badge */}
+                      <button 
+                        onClick={() => handleToggleMastered(card.id)}
+                        className={`mt-1 w-6 h-6 rounded-lg flex items-center justify-center shrink-0 border transition ${
+                          card.mastered 
+                            ? 'bg-emerald-500 border-emerald-500 text-white' 
+                            : 'border-slate-300 text-transparent hover:border-emerald-400'
+                        }`}
+                        title={card.mastered ? '習得済み (クリックで未習得へ)' : '未習得 (クリックで習得済みへ)'}
+                      >
+                        <IconCheck />
+                      </button>
+
+                      <div className="space-y-1 flex-1">
+                        <div className="flex items-center space-x-2 flex-wrap">
+                          <span className="font-bold text-lg text-slate-800">{card.word}</span>
+                          <button 
+                            onClick={() => speakText(card.word)}
+                            className="p-1 text-slate-400 hover:text-brand-600 transition"
+                            title="発音を再生"
+                          >
+                            <IconVolume />
+                          </button>
+                          {card.partOfSpeech && (
+                            <span className="px-2 py-0.5 text-[10px] font-semibold bg-slate-100 text-slate-600 rounded-md">
+                              {card.partOfSpeech}
+                            </span>
+                          )}
+                        </div>
+
+                        <p className="text-sm font-semibold text-slate-700">{card.meaning}</p>
+
+                        {card.example && (
+                          <div className="text-xs text-slate-500 bg-slate-50 p-2 rounded-lg border border-slate-100 mt-1">
+                            <div className="flex items-center justify-between">
+                              <span className="italic font-sans text-slate-700">"{card.example}"</span>
+                              <button 
+                                onClick={() => speakText(card.example)}
+                                className="p-1 text-slate-400 hover:text-brand-600 shrink-0 ml-1"
+                              >
+                                <IconVolume />
+                              </button>
+                            </div>
+                            {card.exampleMeaning && (
+                              <p className="text-slate-500 mt-0.5">{card.exampleMeaning}</p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Card Actions */}
+                    <div className="flex items-center justify-end space-x-2 shrink-0 border-t md:border-t-0 pt-2 md:pt-0 border-slate-100">
+                      <button
+                        onClick={() => { setEditingCard(card); setCardModalOpen(true); }}
+                        className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition"
+                        title="編集"
+                      >
+                        <IconEdit />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteCard(card.id)}
+                        className="p-2 text-slate-400 hover:text-rose-600 hover:bg-slate-100 rounded-lg transition"
+                        title="削除"
+                      >
+                        <IconTrash />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Card Add/Edit Modal */}
+          {cardModalOpen && (
+            <CardModal 
+              editingCard={editingCard}
+              onClose={() => setCardModalOpen(false)}
+              onSave={handleSaveCard}
+            />
+          )}
+
+          {/* Bulk Import Modal */}
+          {bulkModalOpen && (
+            <BulkImportModal 
+              onClose={() => setBulkModalOpen(false)}
+              onImport={handleBulkAdd}
+            />
+          )}
+        </div>
+      );
+    }
+
+    // --- FLASHCARD STUDY VIEW ---
+    function StudyView({ deck, onBack, onUpdateCards }) {
+      const [cards, setCards] = useState(() => [...deck.cards]);
+      const [currentIndex, setCurrentIndex] = useState(0);
+      const [isFlipped, setIsFlipped] = useState(false);
+      const [autoSpeech, setAutoSpeech] = useState(true);
+      const [autoFlipTimer, setAutoFlipTimer] = useState(0); // 0: off, 3, 5, 7
+      const [sessionCompleted, setSessionCompleted] = useState(false);
+      const [reviewedCount, setReviewedCount] = useState({ mastered: 0, review: 0 });
+
+      const currentCard = cards[currentIndex];
+      const colorTheme = COLOR_MAP[deck.color] || COLOR_MAP.indigo;
+
+      // Keyboard Shortcuts
+      useEffect(() => {
+        const handleKeyDown = (e) => {
+          if (sessionCompleted) return;
+          if (e.code === 'Space') {
+            e.preventDefault();
+            setIsFlipped(prev => !prev);
+          } else if (e.code === 'ArrowRight' || e.code === 'Digit2') {
+            handleAnswer(true);
+          } else if (e.code === 'ArrowLeft' || e.code === 'Digit1') {
+            handleAnswer(false);
+          } else if (e.code === 'ArrowUp' || e.code === 'KeyS') {
+            if (currentCard) speakText(currentCard.word);
+          }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+      }, [currentIndex, isFlipped, sessionCompleted, currentCard]);
+
+      // TTS Auto speak on card change
+      useEffect(() => {
+        if (currentCard && autoSpeech && !isFlipped && !sessionCompleted) {
+          speakText(currentCard.word);
+        }
+      }, [currentIndex, autoSpeech, sessionCompleted]);
+
+      // Auto Flip Timer Logic
+      useEffect(() => {
+        if (autoFlipTimer > 0 && !isFlipped && !sessionCompleted) {
+          const timer = setTimeout(() => {
+            setIsFlipped(true);
+          }, autoFlipTimer * 1000);
+          return () => clearTimeout(timer);
+        }
+      }, [currentIndex, isFlipped, autoFlipTimer, sessionCompleted]);
+
+      // Handle Mastered / Review
+      const handleAnswer = (isMastered) => {
+        if (!currentCard || sessionCompleted) return;
+
+        // Update card in main state
+        const updatedDeckCards = deck.cards.map(c => 
+          c.id === currentCard.id ? { ...c, mastered: isMastered } : c
+        );
+        onUpdateCards(updatedDeckCards);
+
+        // Track session score
+        setReviewedCount(prev => ({
+          mastered: isMastered ? prev.mastered + 1 : prev.mastered,
+          review: !isMastered ? prev.review + 1 : prev.review
+        }));
+
+        setIsFlipped(false);
+
+        if (currentIndex < cards.length - 1) {
+          setCurrentIndex(prev => prev + 1);
+        } else {
+          setSessionCompleted(true);
+        }
+      };
+
+      // Shuffle Cards
+      const handleShuffle = () => {
+        const shuffled = [...cards].sort(() => Math.random() - 0.5);
+        setCards(shuffled);
+        setCurrentIndex(0);
+        setIsFlipped(false);
+      };
+
+      // Restart Session (Only Unmastered or All)
+      const handleRestart = (onlyUnmastered = false) => {
+        let nextCards = [...deck.cards];
+        if (onlyUnmastered) {
+          nextCards = nextCards.filter(c => !c.mastered);
+          if (nextCards.length === 0) {
+            alert('要学習のカードがありません！全カードで学習を開始します。');
+            nextCards = [...deck.cards];
+          }
+        }
+        setCards(nextCards);
+        setCurrentIndex(0);
+        setIsFlipped(false);
+        setSessionCompleted(false);
+        setReviewedCount({ mastered: 0, review: 0 });
+      };
+
+      if (!currentCard && !sessionCompleted) {
+        return (
+          <div className="bg-white rounded-2xl p-12 text-center">
+            <p className="text-slate-500">学習できる単語カードがありません。</p>
+            <button onClick={onBack} className="mt-4 px-4 py-2 bg-slate-800 text-white text-xs rounded-xl font-semibold">
+              デッキ一覧に戻る
+            </button>
+          </div>
+        );
+      }
+
+      return (
+        <div className="max-w-2xl mx-auto space-y-6">
+          {/* Top Nav & Controls */}
+          <div className="flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+            <button 
+              onClick={onBack}
+              className="p-2 text-slate-500 hover:bg-slate-100 rounded-xl transition flex items-center space-x-1 text-xs font-semibold"
+            >
+              <IconArrowLeft />
+              <span>終了</span>
+            </button>
+
+            {/* Progress Counter */}
+            {!sessionCompleted && (
+              <div className="text-center">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">PROGRESS</span>
+                <span className="text-base font-extrabold text-slate-800">
+                  {currentIndex + 1} <span className="text-slate-400 font-normal">/ {cards.length}</span>
+                </span>
+              </div>
+            )}
+
+            {/* Controls Bar */}
+            <div className="flex items-center space-x-2">
+              <button 
+                onClick={handleShuffle}
+                className="p-2 text-slate-600 hover:bg-slate-100 rounded-xl transition"
+                title="シャッフル再生"
+              >
+                <IconShuffle />
+              </button>
+              <button 
+                onClick={() => setAutoSpeech(prev => !prev)}
+                className={`p-2 rounded-xl transition ${autoSpeech ? 'text-brand-600 bg-brand-50' : 'text-slate-400 hover:bg-slate-100'}`}
+                title={autoSpeech ? '音声自動再生: ON' : '音声自動再生: OFF'}
+              >
+                <IconVolume />
+              </button>
+              <select
+                value={autoFlipTimer}
+                onChange={(e) => setAutoFlipTimer(Number(e.target.value))}
+                className="text-xs bg-slate-100 border-none rounded-lg py-1.5 px-2 font-medium text-slate-700 focus:ring-0"
+                title="自動めくりタイマー"
+              >
+                <option value={0}>タイマー: OFF</option>
+                <option value={3}>自動めくり: 3秒</option>
+                <option value={5}>自動めくり: 5秒</option>
+                <option value={7}>自動めくり: 7秒</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Progress Bar */}
+          {!sessionCompleted && (
+            <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+              <div 
+                className={`h-full ${colorTheme.bg} transition-all duration-300`}
+                style={{ width: `${((currentIndex) / cards.length) * 100}%` }}
+              />
+            </div>
+          )}
+
+          {/* MAIN 3D FLASHCARD AREA */}
+          {!sessionCompleted ? (
+            <div className="space-y-6">
+              {/* Card Flip Container */}
+              <div 
+                className="w-full h-80 sm:h-96 perspective-1000 cursor-pointer select-none"
+                onClick={() => setIsFlipped(prev => !prev)}
+              >
+                <div className={`relative w-full h-full duration-500 transform-style-3d transition-transform ${isFlipped ? 'rotate-y-180' : ''}`}>
+                  
+                  {/* FRONT SIDE (English Word) */}
+                  <div className="absolute inset-0 w-full h-full bg-white border-2 border-slate-200 rounded-3xl p-8 flex flex-col justify-between items-center text-center shadow-lg backface-hidden">
+                    <div className="w-full flex justify-between items-center text-xs text-slate-400 font-semibold">
+                      <span>{deck.title}</span>
+                      <span className="flex items-center space-x-1">
+                        <IconRotate /> <span>クリックまたは Space で裏返す</span>
+                      </span>
+                    </div>
+
+                    <div className="my-auto space-y-3">
+                      {currentCard.partOfSpeech && (
+                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600">
+                          {currentCard.partOfSpeech}
+                        </span>
+                      )}
+                      <h3 className="text-3xl sm:text-5xl font-extrabold text-slate-800 tracking-tight">
+                        {currentCard.word}
+                      </h3>
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); speakText(currentCard.word); }}
+                        className="p-3 bg-brand-50 hover:bg-brand-100 text-brand-600 rounded-full transition inline-flex items-center justify-center mt-2"
+                        title="発音を聞く [Key S]"
+                      >
+                        <IconVolume />
+                      </button>
+                    </div>
+
+                    <div className="text-xs text-slate-400 font-medium">
+                      カード裏面に日本語の訳が表示されます
+                    </div>
+                  </div>
+
+                  {/* BACK SIDE (Japanese Meaning & Example) */}
+                  <div className="absolute inset-0 w-full h-full bg-slate-900 text-white rounded-3xl p-8 flex flex-col justify-between items-center text-center shadow-xl backface-hidden rotate-y-180">
+                    <div className="w-full flex justify-between items-center text-xs text-slate-400">
+                      <span>意味 & 例文</span>
+                      <span className="flex items-center space-x-1">
+                        <IconRotate /> <span>表面に戻る</span>
+                      </span>
+                    </div>
+
+                    <div className="my-auto space-y-4 max-w-lg">
+                      <div className="text-2xl sm:text-3xl font-bold text-emerald-400">
+                        {currentCard.meaning}
+                      </div>
+
+                      {currentCard.example && (
+                        <div className="bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80 text-left space-y-1.5 mt-2">
+                          <div className="flex items-start justify-between">
+                            <p className="text-sm font-medium text-slate-200 italic">"{currentCard.example}"</p>
+                            <button 
+                              onClick={(e) => { e.stopPropagation(); speakText(currentCard.example); }}
+                              className="p-1 text-slate-400 hover:text-white shrink-0 ml-2"
+                            >
+                              <IconVolume />
+                            </button>
+                          </div>
+                          {currentCard.exampleMeaning && (
+                            <p className="text-xs text-slate-400">{currentCard.exampleMeaning}</p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="text-xs text-slate-400 font-medium">
+                      下の判定ボタンを押して学習を進めてください
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              {/* ANSWER ACTION BUTTONS */}
+              <div className="grid grid-cols-2 gap-4 pt-2">
+                <button
+                  onClick={() => handleAnswer(false)}
+                  className="py-4 px-4 bg-rose-500 hover:bg-rose-600 active:bg-rose-700 text-white rounded-2xl font-bold shadow-md shadow-rose-500/20 transition flex flex-col items-center justify-center space-y-0.5"
+                >
+                  <span className="text-base flex items-center"><IconX /><span className="ml-1">もう一度</span></span>
+                  <span className="text-[10px] font-normal opacity-80">[ Key 1 / ← ]</span>
+                </button>
+
+                <button
+                  onClick={() => handleAnswer(true)}
+                  className="py-4 px-4 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-2xl font-bold shadow-md shadow-emerald-600/20 transition flex flex-col items-center justify-center space-y-0.5"
+                >
+                  <span className="text-base flex items-center"><IconCheck /><span className="ml-1">覚えた！</span></span>
+                  <span className="text-[10px] font-normal opacity-80">[ Key 2 / → ]</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            /* SESSION COMPLETED SUMMARY */
+            <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-xl text-center space-y-6">
+              <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl">
+                <IconSparkles />
+              </div>
+
+              <div>
+                <h3 className="text-2xl font-extrabold text-slate-800">学習セッション完了！</h3>
+                <p className="text-slate-500 text-sm mt-1">すべてのカードのチェックが完了しました。</p>
+              </div>
+
+              {/* Stats Box */}
+              <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100 max-w-sm mx-auto">
+                <div className="text-center">
+                  <span className="text-xs font-semibold text-emerald-600 block">覚えた</span>
+                  <span className="text-2xl font-black text-slate-800">{reviewedCount.mastered}</span>
+                </div>
+                <div className="text-center">
+                  <span className="text-xs font-semibold text-rose-500 block">要復習</span>
+                  <span className="text-2xl font-black text-slate-800">{reviewedCount.review}</span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+                <button
+                  onClick={() => handleRestart(true)}
+                  className="px-5 py-3 bg-slate-800 hover:bg-slate-700 text-white font-semibold text-sm rounded-xl transition"
+                >
+                  要学習カードのみ再テスト
+                </button>
+                <button
+                  onClick={() => handleRestart(false)}
+                  className="px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm rounded-xl transition"
+                >
+                  全カードをもう一度学習
+                </button>
+                <button
+                  onClick={onBack}
+                  className="px-5 py-3 bg-brand-600 hover:bg-brand-500 text-white font-semibold text-sm rounded-xl transition"
+                >
+                  デッキ一覧へ戻る
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // --- MODAL: CREATE / EDIT DECK ---
+    function DeckModal({ editingDeck, onClose, onSave }) {
+      const [title, setTitle] = useState(editingDeck ? editingDeck.title : '');
+      const [description, setDescription] = useState(editingDeck ? editingDeck.description : '');
+      const [color, setColor] = useState(editingDeck ? editingDeck.color : 'indigo');
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!title.trim()) return alert('デッキ名を入力してください');
+        onSave({
+          ...(editingDeck || {}),
+          title: title.trim(),
+          description: description.trim(),
+          color
+        });
+      };
+
+      return (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-5">
+            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+              <h3 className="font-bold text-lg text-slate-800">
+                {editingDeck ? 'デッキを編集' : '新しいデッキを作成'}
+              </h3>
+              <button onClick={onClose} className="p-1 text-slate-400 hover:text-slate-600"><IconX /></button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">デッキタイトル *</label>
+                <input 
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="例: 日常英会話, TOEIC800点語彙"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">説明・メモ</label>
+                <textarea 
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="デッキの概要や目標を入力..."
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 h-20"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-2">テーマカラー</label>
+                <div className="flex items-center space-x-3">
+                  {Object.keys(COLOR_MAP).map((cKey) => (
+                    <button
+                      key={cKey}
+                      type="button"
+                      onClick={() => setColor(cKey)}
+                      className={`w-8 h-8 rounded-full ${COLOR_MAP[cKey].bg} transition-transform ${
+                        color === cKey ? 'ring-4 ring-offset-2 ' + COLOR_MAP[cKey].ring + ' scale-110' : 'opacity-70 hover:opacity-100'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-2 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl"
+                >
+                  キャンセル
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 text-xs font-semibold text-white bg-brand-600 hover:bg-brand-500 rounded-xl shadow"
+                >
+                  保存する
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      );
+    }
+
+    // --- MODAL: CREATE / EDIT CARD ---
+    function CardModal({ editingCard, onClose, onSave }) {
+      const [word, setWord] = useState(editingCard ? editingCard.word : '');
+      const [meaning, setMeaning] = useState(editingCard ? editingCard.meaning : '');
+      const [partOfSpeech, setPartOfSpeech] = useState(editingCard ? editingCard.partOfSpeech : '');
+      const [example, setExample] = useState(editingCard ? editingCard.example : '');
+      const [exampleMeaning, setExampleMeaning] = useState(editingCard ? editingCard.exampleMeaning : '');
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!word.trim() || !meaning.trim()) return alert('英単語と日本語訳は必須です');
+        onSave({
+          ...(editingCard || {}),
+          word: word.trim(),
+          meaning: meaning.trim(),
+          partOfSpeech: partOfSpeech.trim(),
+          example: example.trim(),
+          exampleMeaning: exampleMeaning.trim()
+        });
+      };
+
+      return (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-4">
+            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+              <h3 className="font-bold text-lg text-slate-800">
+                {editingCard ? '単語カードを編集' : '単語カードを追加'}
+              </h3>
+              <button onClick={onClose} className="p-1 text-slate-400 hover:text-slate-600"><IconX /></button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">英単語 *</label>
+                <input 
+                  type="text"
+                  value={word}
+                  onChange={(e) => setWord(e.target.value)}
+                  placeholder="例: articulate"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">日本語の意味 *</label>
+                <input 
+                  type="text"
+                  value={meaning}
+                  onChange={(e) => setMeaning(e.target.value)}
+                  placeholder="例: 明瞭に話す、滑舌が良い"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">品詞・メモ</label>
+                <input 
+                  type="text"
+                  value={partOfSpeech}
+                  onChange={(e) => setPartOfSpeech(e.target.value)}
+                  placeholder="例: 動詞 / 形容詞"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">英語の例文</label>
+                <input 
+                  type="text"
+                  value={example}
+                  onChange={(e) => setExample(e.target.value)}
+                  placeholder="例: He is very articulate in meetings."
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">例文の日本語訳</label>
+                <input 
+                  type="text"
+                  value={exampleMeaning}
+                  onChange={(e) => setExampleMeaning(e.target.value)}
+                  placeholder="例: 彼は会議で非常にわかりやすく話す。"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                />
+              </div>
+
+              <div className="flex justify-end space-x-2 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl"
+                >
+                  キャンセル
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 text-xs font-semibold text-white bg-brand-600 hover:bg-brand-500 rounded-xl shadow"
+                >
+                  保存する
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      );
+    }
+
+    // --- MODAL: BULK COPY-PASTE IMPORT ---
+    function BulkImportModal({ onClose, onImport }) {
+      const [rawText, setRawText] = useState('');
+      const [delimiter, setDelimiter] = useState(':'); // ':' or '\t' or ','
+
+      // Parse text in real-time
+      const parsedCards = useMemo(() => {
+        if (!rawText.trim()) return [];
+        const lines = rawText.split('\n');
+        const results = [];
+
+        lines.forEach((line, index) => {
+          const trimmed = line.trim();
+          if (!trimmed) return;
+
+          let parts = [];
+          if (delimiter === ':') {
+            parts = trimmed.split(':');
+          } else if (delimiter === '\t') {
+            parts = trimmed.split('\t');
+          } else if (delimiter === ',') {
+            parts = trimmed.split(',');
+          }
+
+          if (parts.length >= 2) {
+            const word = parts[0].trim();
+            const meaning = parts[1].trim();
+            const example = parts[2] ? parts[2].trim() : '';
+            
+            if (word && meaning) {
+              results.push({
+                id: 'bulk_' + Date.now() + '_' + index,
+                word,
+                meaning,
+                partOfSpeech: '',
+                example,
+                exampleMeaning: '',
+                mastered: false,
+                createdAt: Date.now()
+              });
+            }
+          }
+        });
+
+        return results;
+      }, [rawText, delimiter]);
+
+      const handleConfirm = () => {
+        if (parsedCards.length === 0) return alert('解析可能な有効なデータが見つかりませんでした。');
+        onImport(parsedCards);
+      };
+
+      return (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-100 space-y-4 max-h-[90vh] flex flex-col">
+            <div className="flex justify-between items-center border-b border-slate-100 pb-3 shrink-0">
+              <h3 className="font-bold text-lg text-slate-800 flex items-center space-x-2">
+                <span>クイック一括登録（コピペ機能）</span>
+              </h3>
+              <button onClick={onClose} className="p-1 text-slate-400 hover:text-slate-600"><IconX /></button>
+            </div>
+
+            <div className="space-y-3 overflow-y-auto flex-1 pr-1">
+              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs text-slate-600 space-y-1">
+                <p className="font-bold text-slate-700">【入力フォーマット例】</p>
+                <p className="font-mono bg-white p-2 rounded border border-slate-200">
+                  apple : りんご : I ate an apple.<br/>
+                  banana : バナナ : Monkeys like bananas.<br/>
+                  pragmatic : 実用的な
+                </p>
+              </div>
+
+              <div className="flex items-center space-x-3">
+                <label className="text-xs font-bold text-slate-700">区切り文字:</label>
+                <select 
+                  value={delimiter}
+                  onChange={(e) => setDelimiter(e.target.value)}
+                  className="text-xs bg-slate-100 border-none rounded-lg py-1 px-3 font-semibold text-slate-700"
+                >
+                  <option value=":">コロン ( : )</option>
+                  <option value="	">タブ ( Tab / Excelコピー )</option>
+                  <option value=",">カンマ ( , )</option>
+                </select>
+              </div>
+
+              <textarea 
+                value={rawText}
+                onChange={(e) => setRawText(e.target.value)}
+                placeholder="ここにテキストをまとめて貼り付けてください..."
+                className="w-full h-36 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono focus:outline-none focus:ring-2 focus:ring-brand-500"
+              />
+
+              {/* Preview Table */}
+              <div>
+                <h4 className="text-xs font-bold text-slate-700 mb-1">
+                  プレビュー検出結果: <span className="text-brand-600 font-extrabold">{parsedCards.length} 件</span>
+                </h4>
+                {parsedCards.length > 0 && (
+                  <div className="max-h-32 overflow-y-auto border border-slate-200 rounded-xl divide-y text-xs">
+                    {parsedCards.map((c, i) => (
+                      <div key={i} className="p-2 flex justify-between bg-white hover:bg-slate-50">
+                        <span className="font-bold text-slate-800">{c.word}</span>
+                        <span className="text-slate-600">{c.meaning}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-2 pt-3 border-t border-slate-100 shrink-0">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl"
+              >
+                キャンセル
+              </button>
+              <button
+                onClick={handleConfirm}
+                disabled={parsedCards.length === 0}
+                className={`px-5 py-2 text-xs font-semibold text-white rounded-xl shadow ${
+                  parsedCards.length === 0 ? 'bg-slate-300 cursor-not-allowed' : 'bg-brand-600 hover:bg-brand-500'
+                }`}
+              >
+                {parsedCards.length} 件を一括登録
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Render React App
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
